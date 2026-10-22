@@ -12,6 +12,11 @@
     <span class="local-badge">本机保存</span>
   </header>
   <main>
+    <section class="activation-panel" aria-label="启用设置">
+      <div class="activation-heading"><label for="enabled-toggle">启用 PageTint</label><input id="enabled-toggle" type="checkbox" role="switch" checked disabled></div>
+      <div class="site-setting"><label for="site-mode" id="site-host">当前网站</label><select id="site-mode" disabled><option value="auto">自动识别文章页</option><option value="on">始终启用</option><option value="off">始终停用</option></select></div>
+      <p id="activation-status" role="status" aria-live="polite">正在读取启用状态…</p>
+    </section>
     <section class="export-panel" aria-labelledby="export-title">
       <div class="export-heading"><span class="file-tag" aria-hidden="true">.md</span><div><h1 id="export-title">导出当前文章</h1><p>完整正文，保留你的编辑样式</p></div></div>
       <button id="export-markdown" class="button button-primary"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/></svg>导出当前页 Markdown</button>
@@ -28,6 +33,6 @@
     <a class="backup-link" href="migration.html" target="_blank" rel="noopener"><span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 8h16v12H4zM3 4h18v4H3zm6 9h6"/></svg>数据备份与迁移</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg></a>
     <p class="shortcuts"><span><kbd>Ctrl B</kbd> 加粗</span><span><kbd>Ctrl Q</kbd> 高亮</span><span><kbd>Ctrl Z</kbd> 撤销</span></p>
   </footer>
-  <script src="core.js"></script><script src="popup.js"></script>
+  <script src="core.js"></script><script src="activation.js"></script><script src="popup.js"></script>
 </body>
 </html>

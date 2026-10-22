@@ -23,14 +23,14 @@ try {
     url: 'chrome-extension://test-extension/popup.html', runScripts: 'outside-only'
   });
   try {
-    const records = { 'course-note:a': { id: 'a', url: 'https://example.com/book/chapter3/#other', title: '导出课程', note: '', color: '#aabbcc', fontColor: 'blue', bold: true, underline: true, createdAt: '2026', updatedAt: '2026', anchor: { exact: '完整正文', start: 4, prefix: '导出课程', suffix: '和其余文字' } } };
+    const records = { pagetintSiteRules: { 'example.com': 'on' }, 'course-note:a': { id: 'a', url: 'https://example.com/book/chapter3/#other', title: '导出课程', note: '', color: '#aabbcc', fontColor: 'blue', bold: true, underline: true, createdAt: '2026', updatedAt: '2026', anchor: { exact: '完整正文', start: 4, prefix: '导出课程', suffix: '和其余文字' } } };
     let receiver, downloaded, payload;
     const storage = {
       local: { async get(keys) { if (keys === null) return structuredClone(records); return Object.fromEntries((Array.isArray(keys) ? keys : [keys]).map(key => [key, records[key]])); } },
       onChanged: { addListener() {} }
     };
     article.window.chrome = { storage, runtime: { id: 'test-extension', onMessage: { addListener(fn) { receiver = fn; } } } };
-    for (const file of ['core.js', 'exporter.js', 'content.js']) article.window.eval(fs.readFileSync(path.join(root, file), 'utf8'));
+    for (const file of ['core.js', 'activation.js', 'exporter.js', 'content.js']) article.window.eval(fs.readFileSync(path.join(root, file), 'utf8'));
     popup.window.chrome = { storage, tabs: {
       async query() { return [{ id: 1, url: article.window.location.href }]; },
       sendMessage(id, message) { return new Promise(resolve => receiver(message, { id: 'test-extension' }, resolve)); }
@@ -39,7 +39,8 @@ try {
     popup.window.URL.createObjectURL = blob => { payload = blob; return 'blob:test-download'; };
     popup.window.URL.revokeObjectURL = () => {};
     popup.window.HTMLAnchorElement.prototype.click = function () { downloaded = this.download; };
-    for (const file of ['core.js', 'popup.js']) popup.window.eval(fs.readFileSync(path.join(root, file), 'utf8'));
+    for (const file of ['core.js', 'activation.js', 'popup.js']) popup.window.eval(fs.readFileSync(path.join(root, file), 'utf8'));
+    for (let i = 0; i < 100 && popup.window.document.getElementById('export-markdown').disabled; i++) await new Promise(resolve => setTimeout(resolve, 5));
     popup.window.document.getElementById('export-markdown').click();
     for (let i = 0; i < 100 && !downloaded; i++) await new Promise(resolve => setTimeout(resolve, 5));
     if (!downloaded) throw Error('No Markdown download: ' + popup.window.document.getElementById('status').textContent);

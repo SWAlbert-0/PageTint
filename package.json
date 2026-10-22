@@ -1,6 +1,6 @@
 {
   "name": "pagetint",
-  "version": "0.9.3",
+  "version": "0.10.1",
   "private": true,
   "description": "Local-first web highlighting, text styling, and Markdown export.",
   "license": "MIT",
@@ -9,7 +9,7 @@
   "engines": { "node": ">=22.0.0" },
   "scripts": {
     "test": "node --test --test-isolation=none tests/*.test.cjs",
-    "test:dom": "node tests/run-export-dom.cjs"
+    "test:dom": "node tests/run-export-dom.cjs && node tests/run-activation-dom.cjs"
   },
   "devDependencies": { "jsdom": "26.1.0" }
 }

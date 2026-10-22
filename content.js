@@ -1,9 +1,12 @@
 (() => {
   'use strict';
   const C = globalThis.PageTint;
+  const A = globalThis.PageTintActivation;
+  // Local development pages never get a toolbar, observers or keyboard handlers.
+  if (A.isLocalHost(A.hostname(location.href))) return;
   const host = document.createElement('div');
   host.id = 'pagetint-ui';
-  host.style.cssText = 'all:initial!important;position:fixed!important;inset:0!important;z-index:2147483647!important;pointer-events:none!important;';
+  host.style.cssText = 'all:initial!important;display:none!important;position:fixed!important;inset:0!important;z-index:2147483647!important;pointer-events:none!important;';
   const shadow = host.attachShadow({ mode: 'closed' });
   shadow.innerHTML = `<style>
     :host{font:14px/1.6 "Microsoft YaHei",sans-serif;color:#203346}
@@ -18,6 +21,7 @@
   document.documentElement.append(host);
   const $ = selector => shadow.querySelector(selector);
   let notes = [], selected = null, currentURL = C.pageKey(location.href), busy = false, timer, toastTimer;
+  let enabled = false, activationState = null, loadRevision = 0;
   let editingId = null, fontColor = null;
   let expandedKind = null;
   let recent = { highlight: [], text: [] };
@@ -91,7 +95,9 @@
   });
   $('#hex-color').onkeydown = event => { if (event.key === 'Enter') { event.preventDefault(); run(applyHex); } };
   updatePalette();
-  const observer = new MutationObserver(() => schedule());
+  const observer = new MutationObserver(changes => {
+    if (changes.some(change => !host.contains(change.target))) schedule();
+  });
   const observe = () => observer.observe(document.body, { childList: true, subtree: true, characterData: true });
   function toast(message) { $('.toast').textContent = message; $('.toast').hidden = false; clearTimeout(toastTimer); toastTimer = setTimeout(() => $('.toast').hidden = true, 3500); }
   function textNodes() {
@@ -106,6 +112,7 @@
     return { nodes, text: nodes.map(n => n.node.data).join('') };
   }
   function capture(showToolbar = true) {
+    if (!enabled) return;
     const selection = getSelection();
     if (!selection || selection.isCollapsed || !selection.rangeCount) return;
     const range = selection.getRangeAt(0);
@@ -147,6 +154,7 @@
     });
   }
   function paint() {
+    if (!enabled) return;
     const anchor = isEditing() ? null : capture(false);
     observer.disconnect();
     unwrap();
@@ -175,13 +183,27 @@
   }
   async function run(fn) { try { await fn(); } catch (error) { toast('操作失败：' + error.message); } }
   async function load() {
-    notes = Object.entries(await chrome.storage.local.get(null)).filter(([key, n]) => key.startsWith(C.PREFIX) && C.validNote(n) && C.pageKey(n.url) === currentURL).map(([, n]) => n).sort((a, b) => a.updatedAt.localeCompare(b.updatedAt));
+    const revision = ++loadRevision;
+    const records = await chrome.storage.local.get(null);
+    if (revision !== loadRevision) return;
+    activationState = A.resolve(document, location.href, records);
+    enabled = activationState.enabled;
+    notes = Object.entries(records).filter(([key, n]) => key.startsWith(C.PREFIX) && C.validNote(n) && C.pageKey(n.url) === currentURL).map(([, n]) => n).sort((a, b) => a.updatedAt.localeCompare(b.updatedAt));
+    if (!enabled) {
+      observer.disconnect(); clearTimeout(timer); clearTimeout(toastTimer);
+      selected = null; editingId = null; closeColors(); $('.toolbar').hidden = true; $('.toast').hidden = true;
+      host.style.setProperty('display', 'none', 'important'); unwrap();
+      // Observe late-loading article bodies only in automatic mode; never paint while inactive.
+      if (!activationState.blocked && activationState.globalEnabled && activationState.mode === 'auto') observe();
+      return;
+    }
+    host.style.removeProperty('display');
     paint();
   }
   function schedule() { clearTimeout(timer); timer = setTimeout(() => run(load), 600); }
   $('.toolbar').onmousedown = event => { if (!event.target.closest('input,label')) event.preventDefault(); };
   async function annotate(patch = {}) {
-    if (!selected || busy) return;
+    if (!enabled || !selected || busy) return;
     if (C.pageKey(location.href) !== currentURL) { $('.toolbar').hidden = true; toast('课程已切换，请重新选择文字'); return; }
     busy = true;
     try {
@@ -192,6 +214,7 @@
       if (existing && !(await chrome.storage.local.get(C.PREFIX + n.id))[C.PREFIX + n.id]) {
         editingId = null; $('.toolbar').hidden = true; toast('该标记已删除，请重新选择文字'); return;
       }
+      if (!enabled) return;
       await historyFor(currentURL).change(C.PREFIX + n.id, n);
       editingId = n.id;
       await load();
@@ -209,17 +232,18 @@
     } finally { busy = false; }
   }
   async function undo() {
-    if (C.pageKey(location.href) !== currentURL) return;
+    if (!enabled || C.pageKey(location.href) !== currentURL) return;
     const changed = await historyFor(currentURL).undo();
     if (changed) { await load(); toast('已撤销上一步'); }
   }
   async function restore() {
-    if (!selected || busy || C.pageKey(location.href) !== currentURL) return;
+    if (!enabled || !selected || busy || C.pageKey(location.href) !== currentURL) return;
     busy = true;
     try {
       const marks = Object.entries(await chrome.storage.local.get(null))
         .filter(([key, n]) => key.startsWith(C.PREFIX) && C.validNote(n) && C.pageKey(n.url) === currentURL).map(([, n]) => n);
       const changes = C.restoreChanges(marks, textNodes().text, selected);
+      if (!enabled) return;
       if (!changes.length) { toast('所选文字没有可复原的插件样式'); return; }
       await historyFor(currentURL).changeMany(changes);
       editingId = null; fontColor = null; closeColors(); updatePalette();
@@ -233,6 +257,7 @@
       (el.matches('input,textarea,select,[role="textbox"]') || el.isContentEditable));
   }
   $('.toolbar').onclick = event => run(async () => {
+    if (!enabled) return;
     const button = event.target.closest('button');
     if (!button) return;
     if (button.dataset.restore) { await restore(); return; }
@@ -247,6 +272,7 @@
     await annotate(button.dataset.highlight ? { color: highlightColor } : button.dataset.underline ? { underline: true } : { bold: true });
   });
   document.addEventListener('keydown', event => {
+    if (!enabled) return;
     const action = C.shortcut(event);
     if (!action || isEditing(event)) return;
     if (action === 'undo') {
@@ -258,9 +284,9 @@
     event.preventDefault(); event.stopPropagation();
     run(() => annotate(action === 'bold' ? { bold: true } : { color: highlightColor }));
   }, true);
-  document.addEventListener('mouseup', e => { if (e.composedPath().includes(host)) return; closeColors(); $('.toolbar').hidden = true; selected = null; editingId = null; fontColor = null; updatePalette(); if (!isEditing(e)) capture(); });
+  document.addEventListener('mouseup', e => { if (!enabled || e.composedPath().includes(host)) return; closeColors(); $('.toolbar').hidden = true; selected = null; editingId = null; fontColor = null; updatePalette(); if (!isEditing(e)) capture(); });
   document.addEventListener('click', event => {
-    if (event.composedPath().includes(host) || isEditing(event) || !getSelection()?.isCollapsed || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
+    if (!enabled || event.composedPath().includes(host) || isEditing(event) || !getSelection()?.isCollapsed || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
     const candidates = [];
     for (let el = event.target; el instanceof Element; el = el.parentElement) {
       const mark = el.dataset.pagetintId && notes.find(n => n.id === el.dataset.pagetintId);
@@ -275,13 +301,22 @@
     updatePalette(); showAt(target.el.getBoundingClientRect());
   });
   document.addEventListener('keyup', e => { if (e.key === 'Escape') { if (expandedKind) closeColors(); else $('.toolbar').hidden = true; } else if (e.key === 'Shift') capture(); });
-  chrome.storage.onChanged.addListener((_, area) => { if (area === 'local') schedule(); });
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area !== 'local') return;
+    if (changes[A.ENABLED] || changes[A.RULES]) { run(load); return; }
+    if (enabled) schedule();
+  });
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message?.type !== 'export-obsidian-markdown' || sender.id !== chrome.runtime.id) return;
+    if (!['export-obsidian-markdown', 'pagetint-state'].includes(message?.type) || sender.id !== chrome.runtime.id) return;
     (async () => {
       try {
-        await load();
-        sendResponse({ ok: true, ...globalThis.PageTintExport.exportPage(document, notes) });
+        const records = await chrome.storage.local.get(null);
+        const state = A.resolve(document, location.href, records);
+        if (message.type === 'pagetint-state') { sendResponse({ ok: true, state }); return; }
+        if (!state.enabled) throw new Error(state.reason);
+        const url = C.pageKey(location.href);
+        const saved = Object.entries(records).filter(([key, n]) => key.startsWith(C.PREFIX) && C.validNote(n) && C.pageKey(n.url) === url).map(([, n]) => n);
+        sendResponse({ ok: true, ...globalThis.PageTintExport.exportPage(document, saved) });
       } catch (error) { sendResponse({ ok: false, error: error.message }); }
     })();
     return true;

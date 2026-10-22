@@ -3,6 +3,19 @@ main { min-height: 0; overflow-y: auto; scrollbar-width: thin; }
 .popup-header, footer { flex-shrink: 0; }
 .popup-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
 h1, h2, p { margin: 0; }
+.activation-panel { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid var(--line); }
+.activation-heading, .site-setting { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.activation-heading > label { font-weight: 600; cursor: pointer; }
+#enabled-toggle { appearance: none; width: 36px; height: 21px; margin: 0; padding: 3px; border: 1px solid #a8babc; border-radius: 20px; background: #c5d1d2; cursor: pointer; flex-shrink: 0; }
+#enabled-toggle::before { content: ''; display: block; width: 13px; height: 13px; border-radius: 50%; background: white; box-shadow: 0 1px 2px #203a4026; }
+#enabled-toggle:checked { background: var(--teal); border-color: var(--teal); }
+#enabled-toggle:checked::before { transform: translateX(15px); }
+#enabled-toggle:disabled { cursor: wait; opacity: .5; }
+#enabled-toggle:focus-visible, #site-mode:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
+.site-setting { margin-top: 12px; }
+#site-host { color: var(--muted); font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+#site-mode { font: inherit; font-size: 11px; color: var(--ink); background: white; border: 1px solid #b7cecf; border-radius: 6px; padding: 5px; max-width: 165px; }
+#activation-status { color: var(--muted); font-size: 11px; margin-top: 7px; }
 .export-panel { background: var(--wash); border: 1px solid #d7e9e9; border-radius: 12px; padding: 15px; }
 .export-heading { display: flex; align-items: center; gap: 11px; margin-bottom: 14px; }
 .file-tag { width: 35px; height: 40px; display: grid; place-items: center; border: 1px solid #e3c461; border-radius: 5px 10px 5px 5px; color: #625222; background: #fff1be; font: 600 12px "Cascadia Code", Consolas, monospace; transform: rotate(-4deg); }

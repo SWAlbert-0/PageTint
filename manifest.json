@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "PageTint · 页彩",
-  "version": "0.9.3",
+  "version": "0.10.1",
   "short_name": "PageTint",
   "description": "轻量网页样式编辑与复原，支持本机保存、按页管理，以及保留编辑样式的 Obsidian Markdown 正文导出。",
   "minimum_chrome_version": "111",
@@ -19,7 +19,7 @@
   },
   "content_scripts": [{
     "matches": ["http://*/*", "https://*/*"],
-    "js": ["core.js", "exporter.js", "content.js"],
+    "js": ["core.js", "activation.js", "exporter.js", "content.js"],
     "run_at": "document_idle"
   }]
 }
