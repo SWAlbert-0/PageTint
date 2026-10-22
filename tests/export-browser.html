@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN"><meta charset="utf-8"><title>课程导出测试 / 记忆</title>
+<nav>不应导出的导航</nav>
+<article>
+  <h1>记忆课程</h1>
+  <p>未标记的完整正文也必须导出。</p>
+  <p><span data-pagetint-id="a">黄色高亮 <span data-pagetint-id="b">叠加文字色</span> 末尾</span></p>
+  <p><strong>原生加粗</strong>，<u>原生下划线</u>，<a href="https://example.com/chapter?q=1">章节链接</a>。</p>
+  <p><a href="javascript:alert(1)">安全文本</a><img alt="示意图" src="https://example.com/diagram.png"></p>
+  <ul><li>第一项<ul><li>嵌套项</li></ul></li><li>第二项</li></ul>
+  <ol start="3"><li>第三步</li></ol>
+  <table><tr><th>名称</th><th>含义</th></tr><tr><td>短期记忆</td><td><span data-pagetint-id="b">蓝色</span></td></tr></table>
+  <pre><code class="language-js">const a = 1;
+
+
+  console.log(a, '```');
+</code></pre>
+  <pre><code>  <span data-pagetint-id="b">缩进代码</span>
+
+    保留空白
+</code></pre>
+  <p>行内 <code><span data-pagetint-id="b">const x = 1</span></code>。</p>
+  <p><span class="katex"><math><semantics><annotation encoding="application/x-tex">x^2 + y^2</annotation></semantics></math></span></p>
+  <blockquote><p>引用内容</p></blockquote>
+  <p>&lt;script&gt;文字不是脚本&lt;/script&gt; 和 **原文字面量**。</p>
+  <div hidden>隐藏内容</div>
+</article>
+<footer>不应导出的页脚</footer>
+<pre id="result">RUNNING</pre>
+<script src="../core.js"></script><script src="../exporter.js"></script>
+<script>
+try {
+  const result = PageTintExport.exportPage(document, [
+    { id: 'a', color: '#ffdf6e', bold: true, underline: true },
+    { id: 'b', color: 'none', fontColor: 'blue' }
+  ], { exportedAt: '2026-10-22T00:00:00Z' });
+  const md = result.markdown;
+  function check(ok, message) { if (!ok) throw Error(message); }
+  check(md.includes('未标记的完整正文也必须导出'), 'full body');
+  check(md.includes('background-color:#ffdf6e99;color:#245ec7;font-weight:700;text-decoration:underline'), 'overlapping styles');
+  check(md.includes('**原生加粗**'), 'native bold');
+  check(md.includes('text-decoration:underline'), 'underline');
+  check(md.includes('[章节链接](<https://example.com/chapter?q=1>)'), 'link');
+  check(md.includes('![示意图](<https://example.com/diagram.png>)'), 'image');
+  check(md.includes('| 名称 | 含义 |'), 'table');
+  check(md.includes('3. 第三步'), 'ordered list start');
+  check(md.includes('  - 嵌套项'), 'nested list');
+  check(md.includes("````js\nconst a = 1;\n\n\n  console.log(a, '```');\n````"), 'code fences/blank lines');
+  check(md.includes('<pre><code>  <span style="color:#245ec7">缩进代码</span>\n\n    保留空白\n</code></pre>'), 'styled code whitespace');
+  check(md.includes('<code><span style="color:#245ec7">const x = 1</span></code>'), 'styled inline code');
+  check(md.includes('$x^2 + y^2$'), 'math');
+  check(!/不应导出|隐藏内容|javascript:|pagetint-id/.test(md), 'excluded content');
+  check(!/<span[^>]*>[^<]*\*\*/.test(md), 'no markdown inside HTML');
+  check(result.filename.endsWith('.md') && !result.filename.includes('/'), 'safe filename');
+  check(result.warnings.length === 0, 'unexpected warnings');
+  document.getElementById('result').textContent = 'PASS: 17 browser export checks\n' + md;
+  document.body.dataset.testResult = 'pass';
+} catch(error) {
+  document.getElementById('result').textContent = 'FAIL: ' + error.message;
+  document.body.dataset.testResult = 'fail';
+}
+</script></html>

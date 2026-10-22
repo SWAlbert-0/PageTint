@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PageTint · 页彩 · 数据管理</title><link rel="icon" type="image/png" href="icons/icon-32.png"><link rel="stylesheet" href="popup.css"></head>
+<body>
+  <header><h1>PageTint · 页彩</h1><p id="summary"></p></header>
+  <main>
+    <button id="export-markdown" class="primary">导出当前页 Markdown</button>
+    <p class="export-help">完整正文 · 一页一个文件 · 保留编辑样式<br>请先打开原网页并等待正文加载，图片保留在线链接。</p>
+    <div id="pages" aria-label="已保存的页面"></div>
+    <p id="status" role="status" aria-live="polite"></p>
+  </main>
+  <footer><p>删除页面数据会清除该页全部编辑样式，无法撤销。<br>Ctrl+B 加粗 · Ctrl+Q 高亮 · Ctrl+Z 撤销编辑</p><a href="migration.html" target="_blank" rel="noopener">数据备份与迁移</a></footer>
+  <script src="core.js"></script><script src="popup.js"></script>
+</body></html>

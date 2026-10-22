@@ -1,0 +1,10 @@
+node_modules/
+coverage/
+.dev-cache/
+.local/
+.env
+.env.*
+*.log
+pagetint-backup-*.json
+.DS_Store
+Thumbs.db

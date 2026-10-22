@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">PageTint · 页彩</title>
+  <desc id="desc">青色圆角底，三行文字，中间一行覆以黄色高亮笔划。</desc>
+  <rect x="8" y="8" width="112" height="112" rx="26" fill="#087E8B"/>
+  <rect x="32" y="33" width="64" height="8" rx="4" fill="#FFFFFF"/>
+  <polygon points="25,57 103,51 103,78 25,84" fill="#FFE080"/>
+  <rect x="34" y="63" width="60" height="8" rx="4" fill="#175363"/>
+  <rect x="32" y="95" width="40" height="8" rx="4" fill="#FFFFFF"/>
+</svg>

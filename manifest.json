@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "PageTint · 页彩",
+  "version": "0.9.3",
+  "short_name": "PageTint",
+  "description": "轻量网页样式编辑与复原，支持本机保存、按页管理，以及保留编辑样式的 Obsidian Markdown 正文导出。",
+  "minimum_chrome_version": "111",
+  "permissions": ["storage", "activeTab"],
+  "icons": {
+    "16": "icons/icon-16.png",
+    "32": "icons/icon-32.png",
+    "48": "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "数据管理",
+    "default_icon": { "16": "icons/icon-16.png", "32": "icons/icon-32.png" }
+  },
+  "content_scripts": [{
+    "matches": ["http://*/*", "https://*/*"],
+    "js": ["core.js", "exporter.js", "content.js"],
+    "run_at": "document_idle"
+  }]
+}

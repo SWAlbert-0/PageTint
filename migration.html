@@ -1,0 +1,7 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PageTint · 数据迁移</title><link rel="icon" href="icons/icon-32.png"><link rel="stylesheet" href="migration.css"></head>
+<body><main><h1>数据备份与迁移</h1><p>将本机编辑数据迁移到新路径安装的 PageTint。全程使用本地文件，不上传数据。</p>
+<section><h2>当前扩展</h2><p id="identity"></p><p id="summary"></p><p id="receipt"></p></section>
+<section><h2>1. 在原扩展中备份</h2><p>重新加载原扩展，再点击下面的按钮。备份包含所有页面标记、自定义样式、最近颜色及其他本地设置。Markdown 导出不能代替此备份。</p><button id="backup">下载完整数据备份</button></section>
+<section><h2>2. 在新版扩展中导入</h2><p>备份成功后，先停用原扩展（不要卸载），再从 <code>pagetint</code> 目录加载新版。打开新版的数据迁移页，选择刚才的 JSON 文件。</p><button id="import">选择备份并导入</button><input id="file" type="file" accept="application/json,.json" hidden></section>
+<section><h2>3. 校验后清理</h2><p>工具会逐项校验写入数据，校验成功后显示来源 ID、目标 ID 和迁移数量。再打开几篇原文章检查标记恢复。完成前不要卸载原扩展或删除旧目录链接。</p><p>如果提示已有不同数据，会停止导入。重复导入相同备份不会产生重复记录，也不会清空目标的其他记录。</p></section>
+<p id="status" role="status" aria-live="polite"></p></main><script src="core.js"></script><script src="migration.js"></script><script src="migration-page.js"></script></body></html>
