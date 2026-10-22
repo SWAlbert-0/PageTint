@@ -2,8 +2,8 @@
 const C = globalThis.PageTint;
 const $ = selector => document.querySelector(selector);
 let deleting = false;
-function status(message) { $('#status').textContent = message; }
-async function run(fn) { try { await fn(); } catch (error) { status('操作失败：' + error.message); } }
+function status(message, kind = 'info') { $('#status').textContent = message; $('#status').dataset.kind = kind; }
+async function run(fn) { try { await fn(); } catch (error) { status('操作失败：' + error.message, 'error'); } }
 $('#export-markdown').onclick = () => run(async () => {
   const button = $('#export-markdown'); button.disabled = true;
   status('正在提取当前页正文…');
@@ -18,26 +18,33 @@ $('#export-markdown').onclick = () => run(async () => {
     const link = document.createElement('a'); link.href = url; link.download = result.filename;
     document.body.append(link); link.click(); link.remove();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
-    status('已发起下载，将 .md 文件放入 Obsidian 仓库即可。' + (result.warnings.length ? '\n注意：' + result.warnings.join('；') : ''));
+    status('已发起下载，将 .md 文件放入 Obsidian 仓库即可。' + (result.warnings.length ? '\n注意：' + result.warnings.join('；') : ''), result.warnings.length ? 'info' : 'success');
   } finally { button.disabled = false; }
 });
 async function load() {
   const pages = C.groupPages(await chrome.storage.local.get(null));
   $('#summary').textContent = `已保存 ${pages.length} 个页面`;
+  $('#delete-help').hidden = !pages.length;
   $('#pages').replaceChildren();
   if (!pages.length) {
-    const empty = document.createElement('p'); empty.className = 'empty';
-    empty.textContent = '暂无页面数据。选中网页文字，高亮或加粗后会自动保存。';
+    const empty = document.createElement('div'); empty.className = 'empty';
+    const title = document.createElement('strong'); title.textContent = '还没有标记过的页面';
+    const help = document.createElement('p'); help.textContent = '打开文章，选中文字高亮或加粗后会自动保存。';
+    empty.append(title, help);
     $('#pages').append(empty);
   }
   for (const page of pages) {
     const row = document.createElement('article'); row.className = 'page';
     const link = document.createElement('a'); link.href = page.url; link.target = '_blank'; link.rel = 'noopener noreferrer'; link.textContent = page.title;
+    link.title = page.title;
     const url = document.createElement('p'); url.className = 'url'; url.textContent = page.url;
+    url.title = page.url;
     const meta = document.createElement('p'); meta.className = 'meta';
     const date = new Date(page.updatedAt);
     meta.textContent = Number.isNaN(date.getTime()) ? '已保存在本机' : '最近编辑：' + date.toLocaleString();
-    const remove = document.createElement('button'); remove.textContent = '删除页面数据'; remove.disabled = deleting;
+    const remove = document.createElement('button'); remove.className = 'delete-page'; remove.textContent = '删除'; remove.disabled = deleting;
+    remove.setAttribute('aria-label', '删除页面数据：' + page.title);
+    remove.title = '删除该页全部编辑数据，无法撤销';
     remove.onclick = () => run(async () => {
       if (deleting) return;
       deleting = true;
@@ -46,10 +53,11 @@ async function load() {
         // Re-read so marks added since opening the popup are included in this page operation.
         const current = C.groupPages(await chrome.storage.local.get(null)).find(p => p.url === page.url);
         if (current) await chrome.storage.local.remove(current.keys);
-        status('已删除该页面的全部编辑数据。');
+        status('已删除该页面的全部编辑数据。', 'success');
       } finally { deleting = false; await load(); }
     });
-    row.append(link, url, meta, remove); $('#pages').append(row);
+    const bottom = document.createElement('div'); bottom.className = 'page-bottom'; bottom.append(meta, remove);
+    row.append(link, url, bottom); $('#pages').append(row);
   }
 }
 chrome.storage.onChanged.addListener((_, area) => { if (area === 'local') run(load); });

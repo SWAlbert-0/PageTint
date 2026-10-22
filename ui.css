@@ -1,0 +1,41 @@
+:root {
+  color-scheme: light;
+  --ink: #203a40;
+  --muted: #64777a;
+  --teal: #087e8b;
+  --teal-dark: #076570;
+  --wash: #edf7f7;
+  --yellow: #ffe080;
+  --line: #dce7e8;
+  --paper: #ffffff;
+  --canvas: #f4f8f8;
+  font: 14px/1.65 "Segoe UI", "Microsoft YaHei UI", "Microsoft YaHei", sans-serif;
+  color: var(--ink);
+  background: var(--canvas);
+}
+* { box-sizing: border-box; }
+body { margin: 0; }
+button, input { font: inherit; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button { cursor: pointer; }
+button:disabled { opacity: .5; cursor: wait; }
+button, a, summary { touch-action: manipulation; }
+:is(button, a, summary):focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
+a { color: var(--teal-dark); }
+svg { display: block; width: 20px; height: 20px; flex-shrink: 0; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand img { display: block; width: 38px; height: 38px; }
+.brand-name { font: 650 19px/1.15 "Segoe UI", sans-serif; letter-spacing: -.6px; }
+.brand-name span { font: 12px/1.4 "Microsoft YaHei UI", sans-serif; letter-spacing: .08em; margin-left: 7px; color: var(--muted); }
+.local-badge { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 11px; white-space: nowrap; }
+.local-badge::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--teal); }
+.button { min-height: 42px; border: 1px solid transparent; border-radius: 9px; display: inline-flex; justify-content: center; align-items: center; gap: 9px; padding: 9px 15px; font-weight: 600; text-decoration: none; transition: background .15s, border-color .15s; }
+.button-primary { background: var(--teal); color: white; }
+.button-primary:hover:not(:disabled) { background: var(--teal-dark); }
+.button-secondary { background: white; border-color: #b7cecf; color: var(--teal-dark); }
+.button-secondary:hover:not(:disabled) { background: var(--wash); border-color: var(--teal); }
+.status { padding: 12px 14px; margin: 16px 0 0; background: var(--wash); border: 1px solid #c6dfe1; border-radius: 9px; font-size: 12px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.status[data-kind="error"] { background: #fff3f0; border-color: #edc8bf; color: #973c2a; }
+.status[data-kind="success"] { background: #eef8f2; border-color: #c9e3d3; color: #276547; }
+.status:empty { display: none; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }

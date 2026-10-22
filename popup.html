@@ -1,14 +1,33 @@
 <!doctype html>
 <html lang="zh-CN">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PageTint · 页彩 · 数据管理</title><link rel="icon" type="image/png" href="icons/icon-32.png"><link rel="stylesheet" href="popup.css"></head>
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>PageTint · 页彩 · 数据管理</title>
+  <link rel="icon" type="image/png" href="icons/icon-32.png">
+  <link rel="stylesheet" href="ui.css"><link rel="stylesheet" href="popup.css">
+</head>
 <body>
-  <header><h1>PageTint · 页彩</h1><p id="summary"></p></header>
+  <header class="popup-header">
+    <div class="brand"><img src="icons/icon.svg" alt="" width="38" height="38"><div class="brand-name">PageTint<span>页彩</span></div></div>
+    <span class="local-badge">本机保存</span>
+  </header>
   <main>
-    <button id="export-markdown" class="primary">导出当前页 Markdown</button>
-    <p class="export-help">完整正文 · 一页一个文件 · 保留编辑样式<br>请先打开原网页并等待正文加载，图片保留在线链接。</p>
-    <div id="pages" aria-label="已保存的页面"></div>
-    <p id="status" role="status" aria-live="polite"></p>
+    <section class="export-panel" aria-labelledby="export-title">
+      <div class="export-heading"><span class="file-tag" aria-hidden="true">.md</span><div><h1 id="export-title">导出当前文章</h1><p>完整正文，保留你的编辑样式</p></div></div>
+      <button id="export-markdown" class="button button-primary"><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M12 3v12m-4-4 4 4 4-4M5 16v4h14v-4"/></svg>导出当前页 Markdown</button>
+      <p class="export-help">请先打开原文并加载正文 · 图片保留在线链接</p>
+    </section>
+    <section class="saved-pages" aria-labelledby="pages-title">
+      <div class="section-heading"><h2 id="pages-title">页面数据</h2><p id="summary" aria-live="polite"></p></div>
+      <div id="pages" aria-label="已保存的页面"></div>
+      <p class="delete-help" id="delete-help">删除会清除该页全部编辑，无法撤销。</p>
+    </section>
+    <p id="status" class="status" role="status" aria-live="polite"></p>
   </main>
-  <footer><p>删除页面数据会清除该页全部编辑样式，无法撤销。<br>Ctrl+B 加粗 · Ctrl+Q 高亮 · Ctrl+Z 撤销编辑</p><a href="migration.html" target="_blank" rel="noopener">数据备份与迁移</a></footer>
+  <footer>
+    <a class="backup-link" href="migration.html" target="_blank" rel="noopener"><span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="M4 8h16v12H4zM3 4h18v4H3zm6 9h6"/></svg>数据备份与迁移</span><svg aria-hidden="true" viewBox="0 0 24 24"><path d="m9 5 7 7-7 7"/></svg></a>
+    <p class="shortcuts"><span><kbd>Ctrl B</kbd> 加粗</span><span><kbd>Ctrl Q</kbd> 高亮</span><span><kbd>Ctrl Z</kbd> 撤销</span></p>
+  </footer>
   <script src="core.js"></script><script src="popup.js"></script>
-</body></html>
+</body>
+</html>

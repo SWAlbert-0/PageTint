@@ -1,1 +1,51 @@
-:root{font:15px/1.8 "Microsoft YaHei",sans-serif;color:#203346;background:#f5f9fb;color-scheme:light}*{box-sizing:border-box}main{max-width:760px;margin:40px auto;padding:28px;background:white;border:1px solid #dce6eb;border-radius:12px}h1{font-size:24px;margin:0}h2{font-size:17px;margin:0 0 8px}section{padding:20px 0;border-bottom:1px solid #dce6eb}p{margin:8px 0;overflow-wrap:anywhere}button{font:inherit;padding:8px 16px;color:#086b76;background:#e4f2f4;border:1px solid #b9cdd7;border-radius:6px;cursor:pointer}button:disabled{opacity:.5;cursor:default}button:focus-visible{outline:2px solid #087e8b;outline-offset:2px}code{background:#edf4f6;padding:2px 5px}#status,#receipt{white-space:pre-wrap}#status{border-left:3px solid #087e8b;padding-left:12px}#status:empty,#receipt:empty{display:none}@media(max-width:600px){main{margin:12px;padding:18px}}
+.shell { width: min(900px, calc(100% - 64px)); margin: 0 auto; }
+.site-header { display: flex; align-items: center; justify-content: space-between; padding: 25px 0; border-bottom: 1px solid var(--line); }
+h1, h2, p { margin: 0; }
+.page-heading { padding: 37px 0 26px; }
+h1 { font-size: clamp(24px, 3vw, 30px); line-height: 1.4; font-weight: 650; letter-spacing: -.6px; }
+.page-heading > p { color: var(--muted); margin-top: 8px; }
+.storage-panel { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; }
+.storage-overview { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+.storage-overview h2 { font-size: 12px; color: var(--muted); font-weight: 500; margin-bottom: 4px; }
+#summary { font-size: 17px; font-weight: 600; }
+.storage-icon { width: 43px; height: 43px; border-radius: 10px; display: grid; place-items: center; background: var(--wash); color: var(--teal); }
+.storage-icon svg { width: 23px; height: 23px; }
+.identity-details { margin-top: 14px; font-size: 11px; color: var(--muted); }
+.identity-details summary { cursor: pointer; width: fit-content; }
+#identity, #receipt-details { margin-top: 9px; white-space: pre-wrap; overflow-wrap: anywhere; font: 11px/1.9 "Cascadia Code", Consolas, "Microsoft YaHei UI", monospace; }
+#receipt-details:empty { display: none; }
+.receipt { margin-top: 16px; padding: 12px 14px; border-left: 3px solid var(--teal); background: var(--wash); color: #37676b; font-size: 12px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.receipt:empty { display: none; }
+.action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+.action-card { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 27px; display: flex; flex-direction: column; align-items: flex-start; }
+.card-icon { width: 43px; height: 43px; border-radius: 10px; display: grid; place-items: center; margin-bottom: 19px; }
+.card-icon svg { width: 23px; height: 23px; }
+.backup-card .card-icon { background: #fff1be; color: #78601b; transform: rotate(-5deg); }
+.backup-card .card-icon svg { transform: rotate(5deg); }
+.import-card .card-icon { background: var(--wash); color: var(--teal); }
+.action-card h2 { font-size: 19px; font-weight: 650; letter-spacing: -.2px; }
+.card-description { margin-top: 9px; font-size: 14px; }
+.card-detail { color: var(--muted); font-size: 12px; margin: 12px 0 24px; flex-grow: 1; }
+.action-card .button { font-size: 13px; min-height: 44px; }
+.action-card .button svg { width: 17px; height: 17px; }
+.action-note { color: var(--muted); font-size: 11px; margin-top: 11px; }
+.migration-guide { padding: 28px 0 24px; }
+.migration-guide h2 { font-size: 14px; font-weight: 600; margin-bottom: 17px; }
+.migration-guide ol { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; list-style: none; counter-reset: migration; margin: 0; padding: 0; }
+.migration-guide li { position: relative; padding-left: 28px; counter-increment: migration; }
+.migration-guide li::before { content: counter(migration); position: absolute; left: 0; top: 2px; width: 19px; height: 19px; border: 1px solid #bacfd0; border-radius: 50%; color: var(--teal-dark); text-align: center; font: 11px/17px "Segoe UI", sans-serif; }
+.migration-guide strong { font-size: 12px; font-weight: 600; }
+.migration-guide p { color: var(--muted); font-size: 11px; margin-top: 6px; line-height: 1.85; }
+footer { border-top: 1px solid var(--line); padding: 17px 0 26px; display: flex; gap: 8px; color: var(--muted); font-size: 11px; align-items: flex-start; }
+footer svg { width: 15px; height: 15px; margin-top: 2px; }
+@media (max-width: 640px) {
+  .shell { width: calc(100% - 32px); }
+  .site-header { padding: 19px 0; }
+  .page-heading { padding: 28px 0 21px; }
+  .page-heading > p { font-size: 13px; }
+  .storage-panel { padding: 18px; }
+  .action-grid { grid-template-columns: 1fr; gap: 14px; }
+  .action-card { padding: 22px; }
+  .card-icon { margin-bottom: 14px; }
+  .migration-guide ol { grid-template-columns: 1fr; gap: 19px; }
+}
