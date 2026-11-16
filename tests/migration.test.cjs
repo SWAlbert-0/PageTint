@@ -27,6 +27,24 @@ test('重复导入去重，保留目标其他页面和设置', async () => {
   assert.equal(storage.data.extra, '保留');
   assert.equal(Object.keys(storage.data).filter(key => key.startsWith('course-note:')).length, 1);
 });
+
+test('旧备份的小节页面计数仍可验证，导入保留原记录并返回合并后的页数', async () => {
+  const url = 'https://hello-agents.datawhale.cc/#/chapter8/' + encodeURIComponent('第八章 记忆与检索.md');
+  const records = {
+    'course-note:a': { ...mark, id: 'a', url: url + '?id=one' },
+    'course-note:b': { ...mark, id: 'b', url: url + '?id=two' }
+  };
+  const file = await M.backup(records, 'old');
+  assert.equal(file.summary.pages, 1);
+  file.summary.pages = 2; // Simulate the exact page-count rule used before 0.10.2.
+  const storage = memory(), receipt = await M.importBackup(storage, file, 'new');
+  assert.equal(receipt.pages, 1);
+  assert.equal(receipt.marks, 2);
+  for (const [key, value] of Object.entries(records)) assert.deepEqual(storage.data[key], value);
+  await assert.rejects(M.validateBackup({ ...file, summary: { ...file.summary, pages: 3 } }), /统计不一致/);
+  const corrupted = structuredClone(file); corrupted.records['course-note:a'].bold = false;
+  await assert.rejects(M.validateBackup(corrupted), /校验失败/);
+});
 test('同一来源 ID 或目标存在冲突时停止，原数据不变', async () => {
   const file = await M.backup(source, 'old'), storage = memory({ highlightColor: 'blue' });
   await assert.rejects(M.importBackup(storage, file, 'old'), /原扩展/);

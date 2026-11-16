@@ -6,7 +6,7 @@ const root = path.join(__dirname, '..');
 const html = fs.readFileSync(path.join(__dirname, 'export-browser.html'), 'utf8');
 const dom = new JSDOM(html, { url: 'https://example.com/book/chapter3/#heading', runScripts: 'outside-only' });
 try {
-  for (const file of ['core.js', 'exporter.js']) dom.window.eval(fs.readFileSync(path.join(root, file), 'utf8'));
+  for (const file of ['core.js', 'comments.js', 'exporter.js']) dom.window.eval(fs.readFileSync(path.join(root, file), 'utf8'));
   const script = [...dom.window.document.scripts].find(script => !script.src);
   dom.window.eval(script.textContent);
   const output = dom.window.document.getElementById('result').textContent;
@@ -23,14 +23,14 @@ try {
     url: 'chrome-extension://test-extension/popup.html', runScripts: 'outside-only'
   });
   try {
-    const records = { pagetintSiteRules: { 'example.com': 'on' }, 'course-note:a': { id: 'a', url: 'https://example.com/book/chapter3/#other', title: '导出课程', note: '', color: '#aabbcc', fontColor: 'blue', bold: true, underline: true, createdAt: '2026', updatedAt: '2026', anchor: { exact: '完整正文', start: 4, prefix: '导出课程', suffix: '和其余文字' } } };
+    const records = { pagetintSiteRules: { 'example.com': 'on' }, 'course-note:a': { id: 'a', url: 'https://example.com/book/chapter3/#other', title: '导出课程', note: '推导见 $E=mc^2$。\n\n$$\\frac{a}{b}$$\n<不应作为 HTML>', color: '#aabbcc', fontColor: 'blue', bold: true, underline: true, createdAt: '2026', updatedAt: '2026', anchor: { exact: '完整正文', start: 4, prefix: '导出课程', suffix: '和其余文字' } } };
     let receiver, downloaded, payload;
     const storage = {
       local: { async get(keys) { if (keys === null) return structuredClone(records); return Object.fromEntries((Array.isArray(keys) ? keys : [keys]).map(key => [key, records[key]])); } },
       onChanged: { addListener() {} }
     };
     article.window.chrome = { storage, runtime: { id: 'test-extension', onMessage: { addListener(fn) { receiver = fn; } } } };
-    for (const file of ['core.js', 'activation.js', 'exporter.js', 'content.js']) article.window.eval(fs.readFileSync(path.join(root, file), 'utf8'));
+    for (const file of ['core.js', 'activation.js', 'vendor/katex.min.js', 'comments.js', 'exporter.js', 'content.js']) article.window.eval(fs.readFileSync(path.join(root, file), 'utf8'));
     popup.window.chrome = { storage, tabs: {
       async query() { return [{ id: 1, url: article.window.location.href }]; },
       sendMessage(id, message) { return new Promise(resolve => receiver(message, { id: 'test-extension' }, resolve)); }
@@ -47,6 +47,8 @@ try {
     const markdown = await payload.text();
     if (downloaded !== '导出课程.md' || !markdown.includes('background-color:#aabbcc99;color:#245ec7;font-weight:700;text-decoration:underline')) throw Error('Saved styles not exported through messaging');
     if (!markdown.includes('和其余文字')) throw Error('Full text missing');
-    console.log('PASS: content message, legacy marks and full-text download');
+    if (!markdown.includes('## 批注') || !markdown.includes('> 完整正文') || !markdown.includes('$E=mc^2$') || !markdown.includes('$$\\frac{a}{b}$$')) throw Error('Comments or TeX missing');
+    if (!markdown.includes('&lt;不应作为 HTML&gt;') || markdown.includes('<不应作为 HTML>')) throw Error('Comment text was not escaped');
+    console.log('PASS: content message, legacy marks, comments, TeX and full-text download');
   } finally { article.window.close(); popup.window.close(); }
 })().catch(error => { console.error(error); process.exitCode = 1; });

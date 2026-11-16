@@ -1,6 +1,7 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 require('../core.js');
+require('../comments.js');
 const E = require('../exporter.js');
 test('导出文件名避开 Windows 非法字符和设备名', () => {
   assert.equal(E.filename('标题 / 第一章?'), '标题 - 第一章-.md');

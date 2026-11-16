@@ -35,7 +35,13 @@
     validateRecords(file.records);
     if (Object.hasOwn(file.records, RECEIPT)) throw new Error('备份中包含保留字段');
     if (await digest(file.records) !== file.sha256) throw new Error('备份校验失败：文件内容不完整或已被修改');
-    if (canonical(summary(file.records)) !== canonical(file.summary)) throw new Error('备份统计不一致');
+    const counts = summary(file.records);
+    if (canonical(counts) !== canonical(file.summary)) {
+      // Older v1 backups counted Docsify heading URLs as separate pages. Validate that exact
+      // historical count as well; record hashes, mark counts and key counts must still match.
+      const legacy = { ...counts, pages: C.groupPages(file.records, C.legacyPageKey).length };
+      if (canonical(legacy) !== canonical(file.summary)) throw new Error('备份统计不一致');
+    }
     return file;
   }
   async function importBackup(storage, file, destinationId) {
@@ -51,7 +57,7 @@
     const saved = await storage.get(Object.keys(file.records));
     const subset = Object.fromEntries(Object.keys(file.records).map(key => [key, saved[key]]));
     if (await digest(subset) !== file.sha256) throw new Error('写入后校验失败，请保留旧扩展与备份文件，重新导入');
-    const receipt = { sourceId: file.sourceId, destinationId, sha256: file.sha256, ...file.summary, verifiedAt: new Date().toISOString() };
+    const receipt = { sourceId: file.sourceId, destinationId, sha256: file.sha256, ...summary(file.records), verifiedAt: new Date().toISOString() };
     await storage.set({ [RECEIPT]: receipt });
     return receipt;
   }

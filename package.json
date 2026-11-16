@@ -1,15 +1,23 @@
 {
   "name": "pagetint",
-  "version": "0.10.1",
+  "version": "0.11.0",
   "private": true,
   "description": "Local-first web highlighting, text styling, and Markdown export.",
   "license": "MIT",
   "author": "SWAlbert-0",
-  "repository": { "type": "git", "url": "https://github.com/SWAlbert-0/PageTint.git" },
-  "engines": { "node": ">=22.0.0" },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/SWAlbert-0/PageTint.git"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "test": "node --test --test-isolation=none tests/*.test.cjs",
     "test:dom": "node tests/run-export-dom.cjs && node tests/run-activation-dom.cjs"
   },
-  "devDependencies": { "jsdom": "26.1.0" }
+  "devDependencies": {
+    "jsdom": "26.1.0",
+    "katex": "0.16.22"
+  }
 }

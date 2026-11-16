@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
   "name": "PageTint · 页彩",
-  "version": "0.10.1",
+  "version": "0.11.0",
   "short_name": "PageTint",
-  "description": "轻量网页样式编辑与复原，支持本机保存、按页管理，以及保留编辑样式的 Obsidian Markdown 正文导出。",
+  "description": "轻量网页样式编辑、批注评论与复原，支持 TeX 公式、本机保存、按页管理和 Obsidian Markdown 正文导出。",
   "minimum_chrome_version": "111",
   "permissions": ["storage", "activeTab"],
   "icons": {
@@ -19,7 +19,7 @@
   },
   "content_scripts": [{
     "matches": ["http://*/*", "https://*/*"],
-    "js": ["core.js", "activation.js", "exporter.js", "content.js"],
+    "js": ["core.js", "activation.js", "vendor/katex.min.js", "comments.js", "exporter.js", "content.js"],
     "run_at": "document_idle"
   }]
 }

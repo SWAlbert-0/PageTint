@@ -1,6 +1,7 @@
 (function (root) {
   'use strict';
   const C = root.PageTint;
+  const Comments = root.PageTintComments;
   const SKIP = 'script,style,noscript,nav,aside,footer,button,input,textarea,select,form,iframe,#pagetint-ui,[hidden],[role="navigation"],[role="banner"],.md-sidebar,.headerlink,.anchor-link,.toc,.table-of-contents,.copy-code-button';
   const BLOCK = /^(P|DIV|SECTION|ARTICLE|MAIN|HEADER|FIGURE|FIGCAPTION|ADDRESS|DETAILS|SUMMARY)$/;
   const escapeHTML = value => String(value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -161,6 +162,15 @@
     const metadata = ['---', 'title: ' + JSON.stringify(title), 'source: ' + JSON.stringify(source), 'exported_at: ' + JSON.stringify(exportedAt), 'tags:', '  - 网页课程', '---', ''].join('\n');
     const missing = marks.filter(mark => ![...doc.querySelectorAll(`[data-pagetint-id="${mark.id}"]`)].some(node => selectedRoot.contains(node))).length;
     if (missing) warnings.add(`${missing} 条标记无法在当前正文定位，未写入相应样式`);
+    const comments = marks.filter(mark => (mark.note || '').trim()).sort((a, b) => a.anchor.start - b.anchor.start || a.createdAt.localeCompare(b.createdAt));
+    if (comments.length) {
+      const section = ['## 批注'];
+      comments.forEach((mark, index) => {
+        const quote = mark.anchor.exact.trim().split('\n').map(line => '> ' + escapeMD(line)).join('\n');
+        section.push('', `### 批注 ${index + 1}`, '', quote, '', Comments.toMarkdown(mark.note, escapeMD));
+      });
+      body += '\n\n' + section.join('\n');
+    }
     return { markdown: metadata + '\n' + body + '\n', filename: filename(title), warnings: [...warnings] };
   }
   root.PageTintExport = { exportPage, filename, safeURL };

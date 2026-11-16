@@ -99,13 +99,38 @@
       }
     };
   }
-  // Ignore in-page headings and known tracking parameters, but retain lesson IDs and SPA routes.
-  function pageKey(url) {
+  // Retain the old identity rules to validate page counts in existing v1 backups.
+  function legacyPageKey(url) {
     const page = new URL(url);
     if (!/^#(?:\/|!|.*[=?])/.test(page.hash)) page.hash = '';
     for (const key of [...page.searchParams.keys()])
       if (/^(utm_.+|fbclid|gclid|msclkid|dclid|mc_cid|mc_eid)$/i.test(key)) page.searchParams.delete(key);
     page.searchParams.sort();
+    return page.href;
+  }
+  // A Docsify heading is a query parameter inside the hash router, not a new page.
+  // Keep this adapter scoped to a verified Docsify host: other apps may use `id` as a document ID.
+  function pageKey(url) {
+    const page = new URL(legacyPageKey(url));
+    if (/^#!?\//.test(page.hash)) {
+      const hash = page.hash.slice(1), anchor = hash.indexOf('#');
+      const route = anchor < 0 ? hash : hash.slice(0, anchor);
+      const query = route.indexOf('?');
+      let path = query < 0 ? route : route.slice(0, query);
+      const params = new URLSearchParams(query < 0 ? '' : route.slice(query + 1));
+      if (page.hostname.toLowerCase().replace(/\.$/, '') === 'hello-agents.datawhale.cc') {
+        params.delete('id');
+        // Canonicalize equivalent encoded/unencoded file names without decoding route separators.
+        path = path.split('/').map(segment => {
+          try { return encodeURIComponent(decodeURIComponent(segment)); } catch { return segment; }
+        }).join('/');
+      }
+      for (const key of [...params.keys()])
+        if (/^(utm_.+|fbclid|gclid|msclkid|dclid|mc_cid|mc_eid)$/i.test(key)) params.delete(key);
+      params.sort();
+      const search = params.toString();
+      page.hash = path + (search ? '?' + search : '');
+    }
     return page.href;
   }
   function updateMark(mark, patch, timestamp = new Date().toISOString()) {
@@ -126,7 +151,15 @@
     const matches = candidates.filter(contextMatches);
     return matches.length === 1 ? { start: matches[0], end: matches[0] + exact.length } : null;
   }
-  function restoreChanges(marks, text, selection, newId = () => crypto.randomUUID()) {
+  function createId() {
+    if (globalThis.crypto?.randomUUID) return globalThis.crypto.randomUUID();
+    const bytes = new Uint8Array(16);
+    globalThis.crypto.getRandomValues(bytes);
+    bytes[6] = (bytes[6] & 0x0f) | 0x40; bytes[8] = (bytes[8] & 0x3f) | 0x80;
+    const hex = [...bytes].map(byte => byte.toString(16).padStart(2, '0')).join('');
+    return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
+  }
+  function restoreChanges(marks, text, selection, newId = createId) {
     const cut = locate(text, selection);
     if (!cut) return [];
     const changes = [];
@@ -162,19 +195,20 @@
       typeof n.anchor.suffix === 'string' && n.anchor.suffix.length <= 64 &&
       Number.isInteger(n.anchor.start) && n.anchor.start >= 0;
   }
-  function groupPages(records) {
+  function groupPages(records, identity = pageKey) {
     const pages = new Map();
     for (const [key, mark] of Object.entries(records)) {
       if (!key.startsWith(PREFIX) || !validNote(mark)) continue;
-      const url = pageKey(mark.url);
-      if (!pages.has(url)) pages.set(url, { url, title: mark.title || url, updatedAt: mark.updatedAt, keys: [] });
+      const url = identity(mark.url);
+      if (!pages.has(url)) pages.set(url, { url, title: mark.title || url, updatedAt: mark.updatedAt, keys: [], comments: 0 });
       const page = pages.get(url);
       page.keys.push(key);
+      if (mark.note.trim()) page.comments++;
       if (mark.updatedAt > page.updatedAt) { page.title = mark.title || url; page.updatedAt = mark.updatedAt; }
     }
     return [...pages.values()].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt) || a.url.localeCompare(b.url));
   }
-  const api = { PREFIX, COLORS, TEXT_COLORS, EXTRA_HIGHLIGHTS, EXTRA_TEXT_COLORS, normalizeHex, colorValue, recentColors, shortcut, createHistory, pageKey, locate, validNote, groupPages, updateMark, restoreChanges };
+  const api = { PREFIX, COLORS, TEXT_COLORS, EXTRA_HIGHLIGHTS, EXTRA_TEXT_COLORS, normalizeHex, colorValue, recentColors, shortcut, createHistory, createId, pageKey, legacyPageKey, locate, validNote, groupPages, updateMark, restoreChanges };
   root.PageTint = api;
   if (typeof module !== 'undefined') module.exports = api;
 })(globalThis);

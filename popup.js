@@ -78,13 +78,13 @@ $('#export-markdown').onclick = () => run(async () => {
 async function load() {
   const records = await chrome.storage.local.get(null);
   const pages = C.groupPages(records);
-  $('#summary').textContent = `已保存 ${pages.length} 个页面`;
+  $('#summary').textContent = `已保存 ${pages.length} 个页面 · ${pages.reduce((sum, page) => sum + page.comments, 0)} 条批注`;
   $('#delete-help').hidden = !pages.length;
   $('#pages').replaceChildren();
   if (!pages.length) {
     const empty = document.createElement('div'); empty.className = 'empty';
     const title = document.createElement('strong'); title.textContent = '还没有标记过的页面';
-    const help = document.createElement('p'); help.textContent = '打开文章，选中文字高亮或加粗后会自动保存。';
+    const help = document.createElement('p'); help.textContent = '打开文章，选中文字后高亮、加粗或添加批注即可保存。';
     empty.append(title, help);
     $('#pages').append(empty);
   }
@@ -95,8 +95,8 @@ async function load() {
     const url = document.createElement('p'); url.className = 'url'; url.textContent = page.url;
     url.title = page.url;
     const meta = document.createElement('p'); meta.className = 'meta';
-    const date = new Date(page.updatedAt);
-    meta.textContent = Number.isNaN(date.getTime()) ? '已保存在本机' : '最近编辑：' + date.toLocaleString();
+    const date = new Date(page.updatedAt), recency = Number.isNaN(date.getTime()) ? '已保存在本机' : '最近编辑：' + date.toLocaleString();
+    meta.textContent = (page.comments ? `${page.comments} 条批注 · ` : '') + recency;
     const remove = document.createElement('button'); remove.className = 'delete-page'; remove.textContent = '删除'; remove.disabled = deleting;
     remove.setAttribute('aria-label', '删除页面数据：' + page.title);
     remove.title = '删除该页全部编辑数据，无法撤销';

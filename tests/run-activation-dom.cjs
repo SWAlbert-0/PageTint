@@ -52,7 +52,7 @@ function content(html, initial, url = mark.url) {
   const store = storage(initial), w = dom.window;
   let receiver;
   w.chrome = { storage: store, runtime: { id: 'extension', onMessage: { addListener(fn) { receiver = fn; } } } };
-  for (const f of ['core.js', 'activation.js', 'exporter.js', 'content.js']) w.eval(fs.readFileSync(path.join(root, f), 'utf8'));
+  for (const f of ['core.js', 'activation.js', 'vendor/katex.min.js', 'comments.js', 'exporter.js', 'content.js']) w.eval(fs.readFileSync(path.join(root, f), 'utf8'));
   return { dom, w, store, message(type, sender = 'extension') { return new Promise(resolve => { if (!receiver || !receiver({ type }, { id: sender }, resolve)) resolve(null); }); } };
 }
 async function until(fn) {
@@ -60,6 +60,25 @@ async function until(fn) {
   throw Error('Activation did not settle');
 }
 (async () => {
+  const docsifyRoute = 'https://hello-agents.datawhale.cc/#/chapter8/' + encodeURIComponent('第八章 记忆与检索.md');
+  const oldSections = {
+    'course-note:a': { ...mark, id: 'a', url: docsifyRoute + '?id=one' },
+    'course-note:b': { ...mark, id: 'b', url: docsifyRoute + '?id=two', color: 'pink', anchor: { exact: '示例文章', start: 0, prefix: '', suffix: '标记原文' } },
+    'course-note:c': { ...mark, id: 'c', url: docsifyRoute.replace('/chapter8/', '/chapter9/') + '?id=one' }
+  };
+  const docsify = content(article, oldSections, docsifyRoute + '?id=three');
+  try {
+    await until(() => docsify.w.document.querySelectorAll('[data-pagetint-id]').length === 2);
+    assert.deepEqual([...docsify.w.document.querySelectorAll('[data-pagetint-id]')].map(el => el.dataset.pagetintId).sort(), ['a', 'b']);
+    assert.equal(docsify.w.PageTint.groupPages(docsify.store.data).length, 2);
+    const exported = await docsify.message('export-obsidian-markdown');
+    assert.equal(exported.ok, true);
+    assert.ok(exported.markdown.includes('source: ' + JSON.stringify(docsifyRoute)));
+    docsify.w.history.replaceState({}, '', docsifyRoute + '?id=four');
+    assert.equal((await docsify.message('export-obsidian-markdown')).ok, true);
+    for (const [key, value] of Object.entries(oldSections)) assert.equal(JSON.stringify(docsify.store.data[key]), JSON.stringify(value));
+    checks += 6;
+  } finally { docsify.dom.window.close(); }
   for (const url of ['http://127.0.0.1:56001/', 'http://localhost:5173/', 'http://[::1]:56001/']) {
     const host = A.hostname(url);
     const localMark = { ...mark, url };

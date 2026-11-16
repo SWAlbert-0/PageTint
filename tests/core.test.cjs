@@ -25,6 +25,48 @@ test('追踪参数与查询顺序不产生重复页面，章节参数仍区分',
   assert.notEqual(C.pageKey('https://a.test/#/chapter1'), C.pageKey('https://a.test/#/chapter2'));
   assert.notEqual(C.pageKey('https://a.test/#lesson=1'), C.pageKey('https://a.test/#lesson=2'));
 });
+
+test('Hello-Agents 同章不同 Docsify 小节合并，章节和业务参数仍隔离', () => {
+  const route = 'https://hello-agents.datawhale.cc/#/chapter8/' + encodeURIComponent('第八章 记忆与检索.md');
+  assert.equal(C.pageKey(route + '?id=_81-记忆系统'), route);
+  assert.equal(C.pageKey(route + '?id=_82-检索系统'), route);
+  assert.equal(C.pageKey(route + '?id=one&utm_source=share'), route);
+  assert.equal(C.pageKey(route + '?lesson=2&id=one&lang=zh'), route + '?lang=zh&lesson=2');
+  assert.notEqual(C.pageKey(route + '?id=one'), C.pageKey(route.replace('/chapter8/', '/chapter9/') + '?id=one'));
+  assert.notEqual(C.pageKey(route + '?lesson=1&id=one'), C.pageKey(route + '?lesson=2&id=one'));
+});
+
+test('Docsify 文件名编码等价，常规 SPA 的文档 id 不误删', () => {
+  const raw = 'https://hello-agents.datawhale.cc/#/chapter8/第八章 记忆与检索.md?id=one';
+  const encoded = 'https://hello-agents.datawhale.cc/#/chapter8/' + encodeURIComponent('第八章 记忆与检索.md') + '?id=two';
+  assert.equal(C.pageKey(raw), C.pageKey(encoded));
+  assert.equal(C.pageKey(C.pageKey(raw)), C.pageKey(raw));
+  assert.notEqual(C.pageKey('https://a.test/#/document.md?id=1'), C.pageKey('https://a.test/#/document.md?id=2'));
+  assert.notEqual(C.pageKey('https://a.test/#/article?id=1'), C.pageKey('https://a.test/#/article?id=2'));
+});
+
+test('hash 路由的第二层锚点和追踪参数不拆页，路由参数顺序一致', () => {
+  assert.equal(C.pageKey('https://a.test/#/chapter8?b=2&utm_source=share&a=1#section'), 'https://a.test/#/chapter8?a=1&b=2');
+  assert.equal(C.pageKey('https://a.test/#!/chapter8#section'), 'https://a.test/#!/chapter8');
+});
+
+test('旧小节记录无损归并，删除页面数据包含同章所有旧键而不影响另一章', () => {
+  const route = 'https://hello-agents.datawhale.cc/#/chapter8/' + encodeURIComponent('第八章 记忆与检索.md');
+  const base = { title: '第八章 记忆与检索', note: '', color: 'yellow', bold: true, underline: true, createdAt: '2026', updatedAt: '2026', anchor: { exact: '原文', start: 0, prefix: '', suffix: '' } };
+  const records = {
+    'course-note:a': { ...base, id: 'a', url: route + '?id=one' },
+    'course-note:b': { ...base, id: 'b', url: route + '?id=two', fontColor: 'red' },
+    'course-note:c': { ...base, id: 'c', url: route.replace('/chapter8/', '/chapter9/') + '?id=one' }
+  };
+  const copy = structuredClone(records), pages = C.groupPages(records);
+  assert.equal(pages.length, 2);
+  assert.deepEqual(C.groupPages(records, C.legacyPageKey).length, 3);
+  assert.deepEqual(records, copy);
+  const chapter = pages.find(page => page.url === route);
+  assert.deepEqual(chapter.keys, ['course-note:a', 'course-note:b']);
+  chapter.keys.forEach(key => delete records[key]);
+  assert.deepEqual(Object.keys(records), ['course-note:c']);
+});
 test('修改已有标记的高亮与文字颜色保留 ID、锚点及加粗，兼容旧数据', () => {
   const mark = { id: 'a', url: 'https://a.test/', title: '课程', note: '', color: 'yellow', bold: true, createdAt: '2026-10-22', updatedAt: '2026-10-22', anchor: { exact: '原文', start: 0, prefix: '', suffix: '' } };
   const updated = C.updateMark(mark, { color: 'pink', fontColor: 'blue' }, '2026-10-23');
@@ -38,6 +80,28 @@ test('修改已有标记的高亮与文字颜色保留 ID、锚点及加粗，�
   assert.ok(C.validNote(mark));
   assert.ok(!C.validNote({ ...updated, fontColor: 'invalid' }));
   assert.throws(() => C.updateMark(mark, { color: 'invalid' }));
+});
+test('普通 HTTP 页面也能生成兼容存储格式的唯一标记 ID', () => {
+  const original = Object.getOwnPropertyDescriptor(globalThis.crypto, 'randomUUID');
+  try {
+    Object.defineProperty(globalThis.crypto, 'randomUUID', { value: undefined, configurable: true });
+    const id = C.createId();
+    assert.match(id, /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
+    assert.notEqual(id, C.createId());
+  } finally {
+    if (original) Object.defineProperty(globalThis.crypto, 'randomUUID', original);
+    else delete globalThis.crypto.randomUUID;
+  }
+});
+test('批注沿用现有标记和备份格式，支持纯批注并统计页面评论数', () => {
+  const mark = { id: 'a', url: 'https://a.test/', title: '课程', note: '', color: 'none', bold: false, createdAt: '2026-10-22', updatedAt: '2026-10-22', anchor: { exact: '正文', start: 0, prefix: '', suffix: '' } };
+  const commented = C.updateMark(mark, { note: '解释 $E=mc^2$' }, '2026-10-23');
+  assert.ok(C.validNote(commented));
+  assert.equal(commented.color, 'none');
+  assert.equal(commented.note, '解释 $E=mc^2$');
+  assert.equal(C.groupPages({ 'course-note:a': commented })[0].comments, 1);
+  assert.equal(C.groupPages({ 'course-note:a': C.updateMark(commented, { note: ' ' }) })[0].comments, 0);
+  assert.equal(C.validNote({ ...commented, note: 'x'.repeat(20001) }), false);
 });
 test('插入新段落后用前后文定位重复句子', () => {
   assert.deepEqual(C.locate('前言 A相同B C相同D', { exact: '相同', prefix: 'C', suffix: 'D', start: 1 }), { start: 9, end: 11 });

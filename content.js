@@ -10,13 +10,15 @@
   const shadow = host.attachShadow({ mode: 'closed' });
   shadow.innerHTML = `<style>
     :host{font:14px/1.6 "Microsoft YaHei",sans-serif;color:#203346}
-    *{box-sizing:border-box}button,input{font:inherit}button{cursor:pointer;border:1px solid #c8d7df;border-radius:7px;background:white;color:#203346;padding:6px 10px}button:hover{background:#e8f3f5}button:disabled{cursor:default;opacity:.5}button:focus-visible,input:focus-visible{outline:2px solid #087e8b;outline-offset:2px}
-    [hidden]{display:none!important}.toolbar,.toast{pointer-events:auto;background:#fff;box-shadow:0 6px 28px #20334626;border:1px solid #c8d7df}
-    .toolbar{position:fixed;display:flex;gap:5px;padding:7px;border-radius:9px;width:310px;max-width:calc(100vw - 16px);flex-wrap:wrap;align-items:center}.palette{display:flex;gap:5px;flex-wrap:wrap;width:100%;border-top:1px solid #dce6eb;padding-top:6px}.palette-label{width:100%;font-size:12px;color:#59717d}.swatch{width:29px;height:27px;padding:0}.swatch[aria-pressed="true"]{outline:2px solid #087e8b;outline-offset:1px}
-    .toast{position:fixed;left:50%;bottom:25px;transform:translateX(-50%);padding:10px 18px;border-radius:8px;max-width:90vw}
-    .toolbar{max-height:calc(100vh - 16px);overflow:auto}.swatch{position:relative}.swatch[aria-pressed="true"]::after{content:'✓';position:absolute;right:-3px;top:-6px;border-radius:50%;background:white;color:#203346;font-size:11px;line-height:14px;width:14px;text-align:center}.more,.more:hover{background:conic-gradient(#ff9292,#ffdf79,#9bdfad,#8bcfff,#c9a2ed,#ff9292);color:#203346;font-size:20px;font-weight:700;text-shadow:0 1px 2px white}.expanded{width:100%;border-top:1px solid #dce6eb;padding-top:8px}.expanded-title{font-size:12px;color:#59717d;margin-bottom:7px}.color-grid{display:grid;grid-template-columns:repeat(8,29px);gap:7px;margin:7px 0 10px}.recent{display:flex;gap:7px;flex-wrap:wrap;margin:7px 0 12px}.custom{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.custom label{font-size:12px}.custom input[type=color]{width:30px;height:29px;border:1px solid #c8d7df;background:white;border-radius:5px;padding:1px;cursor:pointer}.custom input[type=text]{min-width:0;width:91px;border:1px solid #c8d7df;padding:5px;border-radius:5px;color:#203346;background:white;font-family:Consolas,monospace}.color-error{font-size:12px;color:#a62b38;margin-top:5px}
+    *{box-sizing:border-box}button,input,textarea{font:inherit}button{cursor:pointer;border:1px solid #c8d7df;border-radius:7px;background:#fff;color:#203346;padding:6px 10px;transition:background-color .15s,border-color .15s,box-shadow .15s}button:hover{background:#e8f3f5}button:disabled{cursor:default;opacity:.5}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #087e8b;outline-offset:2px}
+    [hidden]{display:none!important}.toolbar,.toast{pointer-events:auto;background:#fff;box-shadow:0 12px 36px #20334624,0 2px 8px #20334612;border:1px solid #d3e0e3}
+    .toolbar{position:fixed;display:flex;gap:9px;padding:10px;border-radius:12px;width:356px;max-width:calc(100vw - 16px);max-height:calc(100vh - 16px);overflow:auto;flex-wrap:wrap;align-items:center}.actions{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:3px;width:100%;padding:3px;background:#f1f5f5;border:1px solid #e1e9ea;border-radius:9px}.actions button{min-width:0;min-height:32px;padding:5px 3px;border-color:transparent;background:transparent;border-radius:6px;font-size:13px;white-space:nowrap}.actions button:hover{background:#fff;box-shadow:0 1px 4px #20334614}.actions [data-restore]:hover{color:#973c2a;background:#fff3f0}.palette{display:flex;gap:6px;flex-wrap:wrap;width:100%;padding:0 2px;align-items:center}.palette-label{width:100%;font-size:11px;line-height:1.4;color:#687c85;letter-spacing:.04em}.swatch{width:30px;height:27px;padding:0;border-color:transparent;border-radius:6px}.swatch:hover{box-shadow:0 0 0 2px #fff,0 0 0 3px #9fc4ca}.swatch[aria-pressed="true"]{outline:2px solid #087e8b;outline-offset:1px}
+    .toast{position:fixed;left:50%;bottom:25px;transform:translateX(-50%);padding:10px 18px;border-radius:9px;max-width:90vw}
+    .swatch{position:relative}.swatch[aria-pressed="true"]::after{content:'✓';position:absolute;right:-3px;top:-6px;border-radius:50%;background:#fff;color:#203346;font-size:11px;line-height:14px;width:14px;text-align:center;box-shadow:0 1px 3px #20334626}.more,.more:hover{background:conic-gradient(#ff9292,#ffdf79,#9bdfad,#8bcfff,#c9a2ed,#ff9292);color:#203346;font-size:20px;font-weight:700;text-shadow:0 1px 2px #fff}.expanded{width:100%;border-top:1px solid #e1e9ea;padding:10px 2px 0}.expanded-title{font-size:12px;color:#59717d;margin-bottom:7px}.color-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;margin:7px 0 10px}.color-grid .swatch{width:100%;max-width:30px;min-width:0;justify-self:center}.recent{display:flex;gap:7px;flex-wrap:wrap;margin:7px 0 12px}.custom{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.custom label{font-size:12px}.custom input[type=color]{width:30px;height:29px;border:1px solid #c8d7df;background:#fff;border-radius:5px;padding:1px;cursor:pointer}.custom input[type=text]{min-width:0;width:91px;border:1px solid #c8d7df;padding:5px;border-radius:5px;color:#203346;background:#fff;font-family:Consolas,monospace}.color-error{font-size:12px;color:#a62b38;margin-top:5px}
+    [data-comment].has-comment{border-color:#9fc4ca;background:#e3f1f2;color:#076570;font-weight:700}.comment-editor{width:100%;border-top:1px solid #e1e9ea;padding:11px 2px 0}.comment-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}.comment-heading strong{font-size:14px}.comment-heading span{font-size:11px;color:#687c85}.comment-quote{margin:8px 0;padding:6px 9px;border-left:3px solid #76b7bf;border-radius:0 5px 5px 0;background:#f4f8f8;color:#59717d;font-size:12px;max-height:60px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}.comment-editor textarea{display:block;width:100%;min-height:88px;max-height:220px;resize:vertical;border:1px solid #c3d5d9;border-radius:8px;padding:8px 9px;color:#203346;background:#fff;line-height:1.6}.comment-editor textarea:focus{border-color:#087e8b}.comment-preview-label{font-size:11px;color:#687c85;margin:8px 0 4px}.comment-preview{min-height:38px;max-height:180px;overflow:auto;padding:8px 10px;background:#f4f8f8;border:1px solid #e7eeee;border-radius:8px;overflow-wrap:anywhere}.comment-text{white-space:pre-wrap}.comment-math{display:inline-block;max-width:100%;vertical-align:middle}.comment-math-display{display:block;overflow-x:auto;margin:8px 0;text-align:center}.comment-math-error{color:#a62b38;background:#fff0ed;white-space:pre-wrap}.comment-error{color:#a62b38;font-size:12px;margin-top:5px}.comment-actions{display:flex;gap:6px;margin-top:9px}.comment-actions [data-save-comment]{background:#087e8b;border-color:#087e8b;color:#fff}.comment-actions [data-save-comment]:hover{background:#076570}.comment-actions [data-delete-comment]{color:#a62b38}.comment-actions [data-cancel-comment]{margin-left:auto}
+    @media(prefers-reduced-motion:reduce){button{transition:none}}
     </style>
-    <div class="toolbar" hidden role="toolbar" aria-label="文字编辑"><button data-highlight="true" title="Ctrl+Q">高亮</button><button data-bold="true" title="Ctrl+B"><b>加粗</b></button><button data-underline="true"><u>下划线</u></button><button data-restore="true" title="清除选中文字上的插件样式">复原</button><div class="palette highlight-palette" role="group" aria-label="高亮颜色"><span class="palette-label">高亮颜色</span></div><div class="palette text-palette" role="group" aria-label="文字颜色"><span class="palette-label">文字颜色</span></div><section class="expanded" hidden aria-label="更多颜色"><div class="expanded-title"></div><div class="color-grid"></div><div class="palette-label">最近使用</div><div class="recent"></div><div class="custom"><label for="custom-color">自定义</label><input id="custom-color" type="color" aria-label="自定义颜色"><input id="hex-color" type="text" maxlength="7" placeholder="#RRGGBB" aria-label="HEX 色值" spellcheck="false"><button data-apply-hex="true">应用</button></div><div class="color-error" role="status" hidden></div></section></div>
+    <div class="toolbar" hidden role="toolbar" aria-label="文字编辑"><div class="actions" role="group" aria-label="文字操作"><button data-highlight="true" title="Ctrl+Q">高亮</button><button data-bold="true" title="Ctrl+B"><b>加粗</b></button><button data-underline="true"><u>下划线</u></button><button data-comment="true" title="为选中文字添加批注和 TeX 公式">批注</button><button data-restore="true" title="清除选中文字上的插件样式">复原</button></div><div class="palette highlight-palette" role="group" aria-label="高亮颜色"><span class="palette-label">高亮颜色</span></div><div class="palette text-palette" role="group" aria-label="文字颜色"><span class="palette-label">文字颜色</span></div><section class="expanded" hidden aria-label="更多颜色"><div class="expanded-title"></div><div class="color-grid"></div><div class="palette-label">最近使用</div><div class="recent"></div><div class="custom"><label for="custom-color">自定义</label><input id="custom-color" type="color" aria-label="自定义颜色"><input id="hex-color" type="text" maxlength="7" placeholder="#RRGGBB" aria-label="HEX 色值" spellcheck="false"><button data-apply-hex="true">应用</button></div><div class="color-error" role="status" hidden></div></section><section class="comment-editor" hidden aria-label="批注编辑"><div class="comment-heading"><strong>批注</strong><span>$行内$ · $$块级$$ · TeX</span></div><blockquote class="comment-quote"></blockquote><textarea id="comment-input" maxlength="20000" placeholder="写下批注，公式如 $E=mc^2$" aria-label="批注内容" spellcheck="true"></textarea><div class="comment-preview-label">预览</div><div class="comment-preview"></div><div class="comment-error" role="status" hidden></div><div class="comment-actions"><button data-save-comment="true">保存批注</button><button data-delete-comment="true" hidden>删除批注</button><button data-cancel-comment="true">取消</button></div></section></div>
     <div class="toast" hidden role="status" aria-live="polite"></div>`;
   document.documentElement.append(host);
   const $ = selector => shadow.querySelector(selector);
@@ -55,6 +57,57 @@
     expandedKind = null; $('.expanded').hidden = true;
     shadow.querySelectorAll('[data-more]').forEach(b => b.setAttribute('aria-expanded', 'false'));
   }
+  function commentMark() { return editingId && notes.find(note => note.id === editingId); }
+  function updateCommentButton() {
+    const hasComment = Boolean(commentMark()?.note.trim()), button = $('[data-comment]');
+    button.classList.toggle('has-comment', hasComment);
+    button.textContent = hasComment ? '批注 •' : '批注';
+    button.title = hasComment ? '查看或编辑已有批注' : '为选中文字添加批注和 TeX 公式';
+  }
+  function closeComment() {
+    $('.comment-editor').hidden = true; $('.comment-error').hidden = true;
+  }
+  function previewComment() {
+    const errors = globalThis.PageTintComments.render($('.comment-preview'), $('#comment-input').value);
+    $('.comment-error').textContent = errors.length ? '公式无法渲染：' + errors[0].message : '';
+    $('.comment-error').hidden = !errors.length;
+    return errors;
+  }
+  function openComment() {
+    if (!selected) return;
+    closeColors();
+    const mark = commentMark();
+    $('#comment-input').value = mark?.note || '';
+    $('.comment-quote').textContent = selected.exact;
+    $('[data-delete-comment]').hidden = !mark?.note;
+    $('.comment-editor').hidden = false;
+    previewComment(); fitToolbar(); $('#comment-input').focus();
+  }
+  async function saveComment() {
+    const value = $('#comment-input').value.trim();
+    if (!value) { $('.comment-error').textContent = '请输入批注内容'; $('.comment-error').hidden = false; $('#comment-input').focus(); return; }
+    if (previewComment().length) { $('#comment-input').focus(); return; }
+    if (await annotate({ note: value })) { closeComment(); updateCommentButton(); restoreSelection(selected); }
+  }
+  async function deleteComment() {
+    const existing = commentMark();
+    if (!enabled || !existing?.note || busy || C.pageKey(location.href) !== currentURL) return;
+    busy = true;
+    try {
+      const key = C.PREFIX + existing.id;
+      if (!(await chrome.storage.local.get(key))[key]) throw new Error('该标记已删除，请重新选择文字');
+      const commentOnly = existing.color === 'none' && !existing.bold && !existing.underline && !existing.fontColor;
+      await historyFor(currentURL).change(key, commentOnly ? undefined : C.updateMark(existing, { note: '' }));
+      closeComment();
+      if (commentOnly) { editingId = null; selected = null; $('.toolbar').hidden = true; }
+      await load(); updateCommentButton(); toast('批注已删除 · Ctrl+Z 撤销');
+    } finally { busy = false; }
+  }
+  $('#comment-input').oninput = previewComment;
+  $('#comment-input').onkeydown = event => {
+    if (event.key === 'Escape') { event.preventDefault(); closeComment(); restoreSelection(selected); }
+    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey)) { event.preventDefault(); run(saveComment); }
+  };
   function fitToolbar() {
     const toolbar = $('.toolbar'), rect = toolbar.getBoundingClientRect();
     toolbar.style.top = Math.max(8, Math.min(rect.top, innerHeight - rect.height - 8)) + 'px';
@@ -131,9 +184,11 @@
     return selected;
   }
   function showAt(rect) {
-    $('.toolbar').hidden = false;
-    $('.toolbar').style.left = Math.max(8, Math.min(innerWidth - 320, rect.left)) + 'px';
-    $('.toolbar').style.top = Math.max(8, Math.min(innerHeight - 220, rect.bottom + 8)) + 'px';
+    const toolbar = $('.toolbar');
+    toolbar.hidden = false;
+    const width = toolbar.getBoundingClientRect().width;
+    toolbar.style.left = Math.max(8, Math.min(innerWidth - width - 8, rect.left)) + 'px';
+    toolbar.style.top = Math.max(8, Math.min(innerHeight - 220, rect.bottom + 8)) + 'px';
   }
   function restoreSelection(anchor) {
     if (!anchor) return;
@@ -168,6 +223,10 @@
         range.setEnd(part.node, Math.min(part.node.length, position.end - part.start));
         const span = document.createElement('span');
         span.dataset.pagetintId = note.id;
+        if (note.note.trim()) {
+          span.dataset.pagetintComment = 'true';
+          span.style.setProperty('border-bottom', '2px dotted #087e8b', 'important');
+        }
         span.style.setProperty('background-color', C.colorValue('highlight', note.color) || 'transparent', 'important');
         if (note.bold) span.style.setProperty('font-weight', '700', 'important');
         if (note.underline) {
@@ -189,9 +248,10 @@
     activationState = A.resolve(document, location.href, records);
     enabled = activationState.enabled;
     notes = Object.entries(records).filter(([key, n]) => key.startsWith(C.PREFIX) && C.validNote(n) && C.pageKey(n.url) === currentURL).map(([, n]) => n).sort((a, b) => a.updatedAt.localeCompare(b.updatedAt));
+    updateCommentButton();
     if (!enabled) {
       observer.disconnect(); clearTimeout(timer); clearTimeout(toastTimer);
-      selected = null; editingId = null; closeColors(); $('.toolbar').hidden = true; $('.toast').hidden = true;
+      selected = null; editingId = null; closeColors(); closeComment(); $('.toolbar').hidden = true; $('.toast').hidden = true;
       host.style.setProperty('display', 'none', 'important'); unwrap();
       // Observe late-loading article bodies only in automatic mode; never paint while inactive.
       if (!activationState.blocked && activationState.globalEnabled && activationState.mode === 'auto') observe();
@@ -201,7 +261,7 @@
     paint();
   }
   function schedule() { clearTimeout(timer); timer = setTimeout(() => run(load), 600); }
-  $('.toolbar').onmousedown = event => { if (!event.target.closest('input,label')) event.preventDefault(); };
+  $('.toolbar').onmousedown = event => { if (!event.target.closest('input,textarea,label')) event.preventDefault(); };
   async function annotate(patch = {}) {
     if (!enabled || !selected || busy) return;
     if (C.pageKey(location.href) !== currentURL) { $('.toolbar').hidden = true; toast('课程已切换，请重新选择文字'); return; }
@@ -209,7 +269,7 @@
     try {
       const now = new Date().toISOString();
       const existing = editingId && notes.find(n => n.id === editingId);
-      const n = existing ? C.updateMark(existing, patch, now) : C.updateMark({ id: crypto.randomUUID(), url: currentURL, title: document.title, anchor: selected, color: 'none', bold: false, note: '', createdAt: now, updatedAt: now }, patch, now);
+      const n = existing ? C.updateMark(existing, patch, now) : C.updateMark({ id: C.createId(), url: currentURL, title: document.title, anchor: selected, color: 'none', bold: false, note: '', createdAt: now, updatedAt: now }, patch, now);
       // Do not resurrect a mark deleted by page data management or another tab.
       if (existing && !(await chrome.storage.local.get(C.PREFIX + n.id))[C.PREFIX + n.id]) {
         editingId = null; $('.toolbar').hidden = true; toast('该标记已删除，请重新选择文字'); return;
@@ -227,7 +287,7 @@
         await chrome.storage.local.set({ recentHighlightColors: recent.highlight, recentTextColors: recent.text, highlightColor });
         updatePalette();
       }
-      toast('标记已保存 · Ctrl+Z 撤销');
+      toast(Object.hasOwn(patch, 'note') ? '批注已保存 · Ctrl+Z 撤销' : '标记已保存 · Ctrl+Z 撤销');
       return true;
     } finally { busy = false; }
   }
@@ -246,7 +306,7 @@
       if (!enabled) return;
       if (!changes.length) { toast('所选文字没有可复原的插件样式'); return; }
       await historyFor(currentURL).changeMany(changes);
-      editingId = null; fontColor = null; closeColors(); updatePalette();
+      editingId = null; fontColor = null; closeColors(); closeComment(); updatePalette(); updateCommentButton();
       await load();
       toast('已复原所选文字 · Ctrl+Z 撤销');
     } finally { busy = false; }
@@ -260,6 +320,10 @@
     if (!enabled) return;
     const button = event.target.closest('button');
     if (!button) return;
+    if (button.dataset.comment) { openComment(); return; }
+    if (button.dataset.saveComment) { await saveComment(); return; }
+    if (button.dataset.deleteComment) { await deleteComment(); return; }
+    if (button.dataset.cancelComment) { closeComment(); restoreSelection(selected); return; }
     if (button.dataset.restore) { await restore(); return; }
     if (button.dataset.more) { openColors(button.dataset.more); return; }
     if (button.dataset.applyHex) { await applyHex(); return; }
@@ -284,7 +348,7 @@
     event.preventDefault(); event.stopPropagation();
     run(() => annotate(action === 'bold' ? { bold: true } : { color: highlightColor }));
   }, true);
-  document.addEventListener('mouseup', e => { if (!enabled || e.composedPath().includes(host)) return; closeColors(); $('.toolbar').hidden = true; selected = null; editingId = null; fontColor = null; updatePalette(); if (!isEditing(e)) capture(); });
+  document.addEventListener('mouseup', e => { if (!enabled || e.composedPath().includes(host)) return; closeColors(); closeComment(); $('.toolbar').hidden = true; selected = null; editingId = null; fontColor = null; updatePalette(); updateCommentButton(); if (!isEditing(e)) capture(); });
   document.addEventListener('click', event => {
     if (!enabled || event.composedPath().includes(host) || isEditing(event) || !getSelection()?.isCollapsed || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
     const candidates = [];
@@ -298,9 +362,9 @@
     editingId = target.mark.id; selected = target.mark.anchor;
     if (target.mark.color !== 'none') highlightColor = target.mark.color;
     fontColor = target.mark.fontColor || null;
-    updatePalette(); showAt(target.el.getBoundingClientRect());
+    updatePalette(); updateCommentButton(); showAt(target.el.getBoundingClientRect());
   });
-  document.addEventListener('keyup', e => { if (e.key === 'Escape') { if (expandedKind) closeColors(); else $('.toolbar').hidden = true; } else if (e.key === 'Shift') capture(); });
+  document.addEventListener('keyup', e => { if (e.key === 'Escape') { if (expandedKind) closeColors(); else if (!$('.comment-editor').hidden) closeComment(); else $('.toolbar').hidden = true; } else if (e.key === 'Shift') capture(); });
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area !== 'local') return;
     if (changes[A.ENABLED] || changes[A.RULES]) { run(load); return; }
@@ -322,7 +386,7 @@
     return true;
   });
   // Canonical page identity is shared with data management and legacy record loading.
-  setInterval(() => { if (C.pageKey(location.href) !== currentURL) { currentURL = C.pageKey(location.href); selected = null; editingId = null; closeColors(); $('.toolbar').hidden = true; run(load); } }, 700);
+  setInterval(() => { if (C.pageKey(location.href) !== currentURL) { currentURL = C.pageKey(location.href); selected = null; editingId = null; closeColors(); closeComment(); updateCommentButton(); $('.toolbar').hidden = true; run(load); } }, 700);
   run(async () => {
     const settings = await chrome.storage.local.get(['highlightColor', 'recentHighlightColors', 'recentTextColors']);
     if (C.colorValue('highlight', settings.highlightColor)) highlightColor = settings.highlightColor;
