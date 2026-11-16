@@ -12,7 +12,7 @@
     :host{font:14px/1.6 "Microsoft YaHei",sans-serif;color:#203346}
     *{box-sizing:border-box}button,input,textarea{font:inherit}button{cursor:pointer;border:1px solid #c8d7df;border-radius:7px;background:#fff;color:#203346;padding:6px 10px;transition:background-color .15s,border-color .15s,box-shadow .15s}button:hover{background:#e8f3f5}button:disabled{cursor:default;opacity:.5}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #087e8b;outline-offset:2px}
     [hidden]{display:none!important}.toolbar,.toast{pointer-events:auto;background:#fff;box-shadow:0 12px 36px #20334624,0 2px 8px #20334612;border:1px solid #d3e0e3}
-    .toolbar{position:fixed;display:flex;gap:9px;padding:10px;border-radius:12px;width:356px;max-width:calc(100vw - 16px);max-height:calc(100vh - 16px);overflow:auto;flex-wrap:wrap;align-items:center}.actions{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:3px;width:100%;padding:3px;background:#f1f5f5;border:1px solid #e1e9ea;border-radius:9px}.actions button{min-width:0;min-height:32px;padding:5px 3px;border-color:transparent;background:transparent;border-radius:6px;font-size:13px;white-space:nowrap}.actions button:hover{background:#fff;box-shadow:0 1px 4px #20334614}.actions [data-restore]:hover{color:#973c2a;background:#fff3f0}.palette{display:flex;gap:6px;flex-wrap:wrap;width:100%;padding:0 2px;align-items:center}.palette-label{width:100%;font-size:11px;line-height:1.4;color:#687c85;letter-spacing:.04em}.swatch{width:30px;height:27px;padding:0;border-color:transparent;border-radius:6px}.swatch:hover{box-shadow:0 0 0 2px #fff,0 0 0 3px #9fc4ca}.swatch[aria-pressed="true"]{outline:2px solid #087e8b;outline-offset:1px}
+    .toolbar{position:fixed;display:flex;gap:9px;padding:10px;border-radius:12px;width:356px;max-width:calc(100vw - 16px);max-height:calc(100vh - 16px);overflow:auto;flex-wrap:wrap;align-items:center}.actions{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:3px;width:100%;padding:3px;background:#f1f5f5;border:1px solid #e1e9ea;border-radius:9px}.actions button{min-width:0;min-height:32px;padding:5px 3px;border-color:transparent;background:transparent;border-radius:6px;font-size:13px;white-space:nowrap}.actions button:hover{background:#fff;box-shadow:0 1px 4px #20334614}.actions button[aria-pressed="true"]{background:#e3f1f2;box-shadow:inset 0 0 0 1px #087e8b}.actions [data-restore]:hover{color:#973c2a;background:#fff3f0}.palette{display:flex;gap:6px;flex-wrap:wrap;width:100%;padding:0 2px;align-items:center}.palette-label{width:100%;font-size:11px;line-height:1.4;color:#687c85;letter-spacing:.04em}.swatch{width:30px;height:27px;padding:0;border-color:transparent;border-radius:6px}.swatch:hover{box-shadow:0 0 0 2px #fff,0 0 0 3px #9fc4ca}.swatch[aria-pressed="true"]{outline:2px solid #087e8b;outline-offset:1px}
     .toast{position:fixed;left:50%;bottom:25px;transform:translateX(-50%);padding:10px 18px;border-radius:9px;max-width:90vw}
     .comment-view{position:fixed;pointer-events:auto;width:360px;max-width:calc(100vw - 16px);max-height:min(280px,calc(100vh - 16px));overflow:auto;padding:12px 14px;border:1px solid #c9dcdf;border-left:3px solid #087e8b;border-radius:10px;background:#fff;color:#203346;box-shadow:0 12px 34px #20334626,0 2px 8px #20334612;font-size:13px;line-height:1.7;scrollbar-width:thin;scrollbar-color:#aac5c9 transparent}.comment-view .comment-math-display{margin:10px 0}.comment-view .comment-math-error{padding:2px 4px;border-radius:4px}
     .swatch{position:relative}.swatch[aria-pressed="true"]::after{content:'✓';position:absolute;right:-3px;top:-6px;border-radius:50%;background:#fff;color:#203346;font-size:11px;line-height:14px;width:14px;text-align:center;box-shadow:0 1px 3px #20334626}.more,.more:hover{background:conic-gradient(#ff9292,#ffdf79,#9bdfad,#8bcfff,#c9a2ed,#ff9292);color:#203346;font-size:20px;font-weight:700;text-shadow:0 1px 2px #fff}.expanded{width:100%;border-top:1px solid #e1e9ea;padding:10px 2px 0}.expanded-title{font-size:12px;color:#59717d;margin-bottom:7px}.color-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;margin:7px 0 10px}.color-grid .swatch{width:100%;max-width:30px;min-width:0;justify-self:center}.recent{display:flex;gap:7px;flex-wrap:wrap;margin:7px 0 12px}.custom{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.custom label{font-size:12px}.custom input[type=color]{width:30px;height:29px;border:1px solid #c8d7df;background:#fff;border-radius:5px;padding:1px;cursor:pointer}.custom input[type=text]{min-width:0;width:91px;border:1px solid #c8d7df;padding:5px;border-radius:5px;color:#203346;background:#fff;font-family:Consolas,monospace}.color-error{font-size:12px;color:#a62b38;margin-top:5px}
@@ -43,6 +43,12 @@
     shadow.querySelectorAll('[data-color]').forEach(button => button.setAttribute('aria-pressed', String(C.colorValue('highlight', button.dataset.color) === C.colorValue('highlight', highlightColor))));
     shadow.querySelectorAll('[data-font-color]').forEach(button => button.setAttribute('aria-pressed', String(C.colorValue('text', button.dataset.fontColor) === C.colorValue('text', fontColor))));
     $('[data-highlight]').style.backgroundColor = C.colorValue('highlight', highlightColor);
+    updateStyleButtons();
+  }
+  function updateStyleButtons() {
+    const existing = editingId && notes.find(note => note.id === editingId);
+    const states = { highlight: Boolean(existing && existing.color !== 'none'), bold: Boolean(existing?.bold), underline: Boolean(existing?.underline) };
+    for (const [action, pressed] of Object.entries(states)) $(`[data-${action}]`).setAttribute('aria-pressed', String(pressed));
   }
   function updateShortcutHints() {
     $('[data-highlight]').title = '高亮 · ' + preferences.shortcuts.highlight;
@@ -299,6 +305,7 @@
     enabled = activationState.enabled;
     notes = Object.entries(records).filter(([key, n]) => key.startsWith(C.PREFIX) && C.validNote(n) && C.pageKey(n.url) === currentURL).map(([, n]) => n).sort((a, b) => a.updatedAt.localeCompare(b.updatedAt));
     updateCommentButton();
+    updateStyleButtons();
     if (commentHoverId && !$('.comment-view').hidden) {
       const current = notes.find(item => item.id === commentHoverId && item.note.trim());
       const target = current && document.querySelector(`[data-pagetint-comment][data-pagetint-id="${commentHoverId}"]`);
@@ -330,9 +337,10 @@
       if (existing && !(await chrome.storage.local.get(C.PREFIX + n.id))[C.PREFIX + n.id]) {
         editingId = null; $('.toolbar').hidden = true; toast('该标记已删除，请重新选择文字'); return;
       }
+      const empty = !n.note.trim() && n.color === 'none' && !n.bold && !n.underline && !n.fontColor;
       if (!enabled) return;
-      await historyFor(currentURL).change(C.PREFIX + n.id, n);
-      editingId = n.id;
+      await historyFor(currentURL).change(C.PREFIX + n.id, empty ? undefined : n);
+      editingId = empty ? null : n.id;
       await load();
       if (patch.color && patch.color !== 'none') {
         highlightColor = patch.color;
@@ -343,7 +351,7 @@
         await chrome.storage.local.set({ recentHighlightColors: recent.highlight, recentTextColors: recent.text, highlightColor, textColor: currentTextColor });
         updatePalette();
       }
-      toast(`${Object.hasOwn(patch, 'note') ? '批注已保存' : '标记已保存'} · ${preferences.shortcuts.undo} 撤销`);
+      toast(`${empty ? '标记已取消' : Object.hasOwn(patch, 'note') ? '批注已保存' : '标记已保存'} · ${preferences.shortcuts.undo} 撤销`);
       return true;
     } finally { busy = false; }
   }
@@ -389,7 +397,9 @@
     if (button.dataset.fontColor) {
       await applyColor('text', button.dataset.fontColor); return;
     }
-    await annotate(button.dataset.highlight ? { color: highlightColor } : button.dataset.underline ? { underline: true } : { bold: true });
+    const action = button.dataset.highlight ? 'highlight' : button.dataset.underline ? 'underline' : 'bold';
+    const existing = editingId && notes.find(note => note.id === editingId);
+    await annotate(C.toggleStyle(existing, action, highlightColor));
   });
   document.addEventListener('keydown', event => {
     if (!enabled) return;

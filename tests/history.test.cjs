@@ -33,6 +33,16 @@ test('自定义快捷键按操作匹配，支持 Ctrl、Alt 与 Shift 组合', (
   assert.equal(C.shortcutFromEvent({ key: 'k', shiftKey: true }), null);
   assert.equal(C.shortcutFromEvent({ key: 'Shift', shiftKey: true }), null);
 });
+test('高亮、加粗与下划线二次操作切换状态并保留其他批注样式', () => {
+  const mark = { color: 'yellow', bold: true, underline: false, fontColor: 'red', note: '保留批注' };
+  assert.deepEqual(C.toggleStyle(mark, 'highlight', 'blue'), { color: 'none' });
+  assert.deepEqual(C.toggleStyle({ ...mark, color: 'none' }, 'highlight', 'blue'), { color: 'blue' });
+  assert.deepEqual(C.toggleStyle(mark, 'bold'), { bold: false });
+  assert.deepEqual(C.toggleStyle(mark, 'underline'), { underline: true });
+  assert.deepEqual(C.toggleStyle(undefined, 'bold'), { bold: true });
+  assert.deepEqual(C.toggleStyle(undefined, 'underline'), { underline: true });
+  assert.throws(() => C.toggleStyle(mark, 'fontColor'), /不支持/);
+});
 test('阅读设置规范化损坏数据，保留默认值并限制悬停时间', () => {
   assert.deepEqual(C.normalizePreferences(), { commentHoverDelay: 2000, shortcuts: C.DEFAULT_SHORTCUTS });
   assert.deepEqual(C.normalizePreferences({ commentHoverDelay: 500, shortcuts: { bold: 'Alt+B' } }), {

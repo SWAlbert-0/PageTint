@@ -167,6 +167,11 @@
     }
     return page.href;
   }
+  function toggleStyle(mark, action, currentHighlight = 'yellow') {
+    if (action === 'highlight') return { color: mark && mark.color !== 'none' ? 'none' : currentHighlight };
+    if (action === 'bold' || action === 'underline') return { [action]: !mark?.[action] };
+    throw new Error('不支持的样式操作');
+  }
   function updateMark(mark, patch, timestamp = new Date().toISOString()) {
     const updated = { ...mark, ...patch, updatedAt: timestamp };
     if (!validNote(updated)) throw new Error('无效的文字样式');
@@ -242,7 +247,7 @@
     }
     return [...pages.values()].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt) || a.url.localeCompare(b.url));
   }
-  const api = { PREFIX, PREFERENCES, DEFAULT_HOVER_DELAY, DEFAULT_SHORTCUTS, COLORS, TEXT_COLORS, EXTRA_HIGHLIGHTS, EXTRA_TEXT_COLORS, normalizeHex, colorValue, recentColors, parseShortcut, formatShortcut, shortcutFromEvent, normalizePreferences, shortcut, createHistory, createId, pageKey, legacyPageKey, locate, validNote, groupPages, updateMark, restoreChanges };
+  const api = { PREFIX, PREFERENCES, DEFAULT_HOVER_DELAY, DEFAULT_SHORTCUTS, COLORS, TEXT_COLORS, EXTRA_HIGHLIGHTS, EXTRA_TEXT_COLORS, normalizeHex, colorValue, recentColors, parseShortcut, formatShortcut, shortcutFromEvent, normalizePreferences, shortcut, createHistory, createId, pageKey, legacyPageKey, locate, validNote, groupPages, toggleStyle, updateMark, restoreChanges };
   root.PageTint = api;
   if (typeof module !== 'undefined') module.exports = api;
 })(globalThis);
