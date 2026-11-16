@@ -21,6 +21,30 @@ test('快捷键仅识别 Ctrl+B/Q/Z，忽略输入法、长按与其他组合', 
     assert.equal(C.shortcut(event), null);
 });
 
+test('自定义快捷键按操作匹配，支持 Ctrl、Alt 与 Shift 组合', () => {
+  const shortcuts = { bold: 'Ctrl+Shift+K', highlight: 'Alt+H', undo: 'Ctrl+Alt+Z' };
+  assert.equal(C.shortcut({ key: 'k', ctrlKey: true, shiftKey: true }, shortcuts), 'bold');
+  assert.equal(C.shortcut({ key: 'h', altKey: true }, shortcuts), 'highlight');
+  assert.equal(C.shortcut({ key: 'z', ctrlKey: true, altKey: true }, shortcuts), 'undo');
+  assert.equal(C.shortcut({ key: 'c', altKey: true }, shortcuts), 'fontColor');
+  assert.equal(C.shortcut({ key: 'k', ctrlKey: true }, shortcuts), null);
+  assert.equal(C.shortcut({ key: 'b', ctrlKey: true }, shortcuts), null);
+  assert.equal(C.shortcutFromEvent({ key: 'k', ctrlKey: true, shiftKey: true }), 'Ctrl+Shift+K');
+  assert.equal(C.shortcutFromEvent({ key: 'k', shiftKey: true }), null);
+  assert.equal(C.shortcutFromEvent({ key: 'Shift', shiftKey: true }), null);
+});
+test('阅读设置规范化损坏数据，保留默认值并限制悬停时间', () => {
+  assert.deepEqual(C.normalizePreferences(), { commentHoverDelay: 2000, shortcuts: C.DEFAULT_SHORTCUTS });
+  assert.deepEqual(C.normalizePreferences({ commentHoverDelay: 500, shortcuts: { bold: 'Alt+B' } }), {
+    commentHoverDelay: 500, shortcuts: { bold: 'Alt+B', highlight: 'Ctrl+Q', fontColor: 'Alt+C', undo: 'Ctrl+Z' }
+  });
+  assert.equal(C.normalizePreferences({ commentHoverDelay: -1 }).commentHoverDelay, 2000);
+  assert.equal(C.normalizePreferences({ commentHoverDelay: 99999 }).commentHoverDelay, 2000);
+  assert.equal(C.normalizePreferences({ commentHoverDelay: 0 }).commentHoverDelay, 0);
+  assert.equal(C.formatShortcut('Shift+B'), '');
+  assert.equal(C.formatShortcut('ctrl+b'), '');
+});
+
 test('八种颜色的批注可验证并备份，兼容原有颜色', () => {
   const note = { id: 'abc', url: 'https://a.test/', title: '', note: '', bold: false,
     createdAt: '', updatedAt: '', anchor: { exact: '文字', start: 0, prefix: '', suffix: '' } };

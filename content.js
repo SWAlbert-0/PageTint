@@ -14,19 +14,25 @@
     [hidden]{display:none!important}.toolbar,.toast{pointer-events:auto;background:#fff;box-shadow:0 12px 36px #20334624,0 2px 8px #20334612;border:1px solid #d3e0e3}
     .toolbar{position:fixed;display:flex;gap:9px;padding:10px;border-radius:12px;width:356px;max-width:calc(100vw - 16px);max-height:calc(100vh - 16px);overflow:auto;flex-wrap:wrap;align-items:center}.actions{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:3px;width:100%;padding:3px;background:#f1f5f5;border:1px solid #e1e9ea;border-radius:9px}.actions button{min-width:0;min-height:32px;padding:5px 3px;border-color:transparent;background:transparent;border-radius:6px;font-size:13px;white-space:nowrap}.actions button:hover{background:#fff;box-shadow:0 1px 4px #20334614}.actions [data-restore]:hover{color:#973c2a;background:#fff3f0}.palette{display:flex;gap:6px;flex-wrap:wrap;width:100%;padding:0 2px;align-items:center}.palette-label{width:100%;font-size:11px;line-height:1.4;color:#687c85;letter-spacing:.04em}.swatch{width:30px;height:27px;padding:0;border-color:transparent;border-radius:6px}.swatch:hover{box-shadow:0 0 0 2px #fff,0 0 0 3px #9fc4ca}.swatch[aria-pressed="true"]{outline:2px solid #087e8b;outline-offset:1px}
     .toast{position:fixed;left:50%;bottom:25px;transform:translateX(-50%);padding:10px 18px;border-radius:9px;max-width:90vw}
+    .comment-view{position:fixed;pointer-events:auto;width:360px;max-width:calc(100vw - 16px);max-height:min(280px,calc(100vh - 16px));overflow:auto;padding:12px 14px;border:1px solid #c9dcdf;border-left:3px solid #087e8b;border-radius:10px;background:#fff;color:#203346;box-shadow:0 12px 34px #20334626,0 2px 8px #20334612;font-size:13px;line-height:1.7;scrollbar-width:thin;scrollbar-color:#aac5c9 transparent}.comment-view .comment-math-display{margin:10px 0}.comment-view .comment-math-error{padding:2px 4px;border-radius:4px}
     .swatch{position:relative}.swatch[aria-pressed="true"]::after{content:'✓';position:absolute;right:-3px;top:-6px;border-radius:50%;background:#fff;color:#203346;font-size:11px;line-height:14px;width:14px;text-align:center;box-shadow:0 1px 3px #20334626}.more,.more:hover{background:conic-gradient(#ff9292,#ffdf79,#9bdfad,#8bcfff,#c9a2ed,#ff9292);color:#203346;font-size:20px;font-weight:700;text-shadow:0 1px 2px #fff}.expanded{width:100%;border-top:1px solid #e1e9ea;padding:10px 2px 0}.expanded-title{font-size:12px;color:#59717d;margin-bottom:7px}.color-grid{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;margin:7px 0 10px}.color-grid .swatch{width:100%;max-width:30px;min-width:0;justify-self:center}.recent{display:flex;gap:7px;flex-wrap:wrap;margin:7px 0 12px}.custom{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.custom label{font-size:12px}.custom input[type=color]{width:30px;height:29px;border:1px solid #c8d7df;background:#fff;border-radius:5px;padding:1px;cursor:pointer}.custom input[type=text]{min-width:0;width:91px;border:1px solid #c8d7df;padding:5px;border-radius:5px;color:#203346;background:#fff;font-family:Consolas,monospace}.color-error{font-size:12px;color:#a62b38;margin-top:5px}
     [data-comment].has-comment{border-color:#9fc4ca;background:#e3f1f2;color:#076570;font-weight:700}.comment-editor{width:100%;border-top:1px solid #e1e9ea;padding:11px 2px 0}.comment-heading{display:flex;align-items:center;justify-content:space-between;gap:8px}.comment-heading strong{font-size:14px}.comment-heading span{font-size:11px;color:#687c85}.comment-quote{margin:8px 0;padding:6px 9px;border-left:3px solid #76b7bf;border-radius:0 5px 5px 0;background:#f4f8f8;color:#59717d;font-size:12px;max-height:60px;overflow:auto;white-space:pre-wrap;overflow-wrap:anywhere}.comment-editor textarea{display:block;width:100%;min-height:88px;max-height:220px;resize:vertical;border:1px solid #c3d5d9;border-radius:8px;padding:8px 9px;color:#203346;background:#fff;line-height:1.6}.comment-editor textarea:focus{border-color:#087e8b}.comment-preview-label{font-size:11px;color:#687c85;margin:8px 0 4px}.comment-preview{min-height:38px;max-height:180px;overflow:auto;padding:8px 10px;background:#f4f8f8;border:1px solid #e7eeee;border-radius:8px;overflow-wrap:anywhere}.comment-text{white-space:pre-wrap}.comment-math{display:inline-block;max-width:100%;vertical-align:middle}.comment-math-display{display:block;overflow-x:auto;margin:8px 0;text-align:center}.comment-math-error{color:#a62b38;background:#fff0ed;white-space:pre-wrap}.comment-error{color:#a62b38;font-size:12px;margin-top:5px}.comment-actions{display:flex;gap:6px;margin-top:9px}.comment-actions [data-save-comment]{background:#087e8b;border-color:#087e8b;color:#fff}.comment-actions [data-save-comment]:hover{background:#076570}.comment-actions [data-delete-comment]{color:#a62b38}.comment-actions [data-cancel-comment]{margin-left:auto}
+    .toolbar.comment-open{flex-wrap:nowrap;flex-direction:column;align-items:stretch;overflow:hidden}.comment-open>.actions{flex:0 0 auto}.comment-open>.palette{display:none}.comment-open>.comment-editor{flex:1 1 auto;min-height:0;max-height:calc(100vh - 96px);display:flex;flex-direction:column;overflow:hidden}.comment-open .comment-heading,.comment-open .comment-preview-label,.comment-open .comment-error,.comment-open .comment-actions{flex-shrink:0}.comment-open .comment-quote{flex:0 1 auto;min-height:0}.comment-open textarea{flex:0 1 130px;min-height:64px;max-height:160px}.comment-open .comment-preview{flex:1 1 120px;min-height:48px;max-height:none}.comment-open .comment-actions{margin-top:8px;padding-top:8px;border-top:1px solid #e1e9ea;background:#fff}
+    @media(max-height:520px){.comment-open .comment-quote,.comment-open .comment-heading span{display:none}.comment-open textarea{min-height:52px}.comment-open .comment-preview{min-height:36px}}
     @media(prefers-reduced-motion:reduce){button{transition:none}}
     </style>
     <div class="toolbar" hidden role="toolbar" aria-label="文字编辑"><div class="actions" role="group" aria-label="文字操作"><button data-highlight="true" title="Ctrl+Q">高亮</button><button data-bold="true" title="Ctrl+B"><b>加粗</b></button><button data-underline="true"><u>下划线</u></button><button data-comment="true" title="为选中文字添加批注和 TeX 公式">批注</button><button data-restore="true" title="清除选中文字上的插件样式">复原</button></div><div class="palette highlight-palette" role="group" aria-label="高亮颜色"><span class="palette-label">高亮颜色</span></div><div class="palette text-palette" role="group" aria-label="文字颜色"><span class="palette-label">文字颜色</span></div><section class="expanded" hidden aria-label="更多颜色"><div class="expanded-title"></div><div class="color-grid"></div><div class="palette-label">最近使用</div><div class="recent"></div><div class="custom"><label for="custom-color">自定义</label><input id="custom-color" type="color" aria-label="自定义颜色"><input id="hex-color" type="text" maxlength="7" placeholder="#RRGGBB" aria-label="HEX 色值" spellcheck="false"><button data-apply-hex="true">应用</button></div><div class="color-error" role="status" hidden></div></section><section class="comment-editor" hidden aria-label="批注编辑"><div class="comment-heading"><strong>批注</strong><span>$行内$ · $$块级$$ · TeX</span></div><blockquote class="comment-quote"></blockquote><textarea id="comment-input" maxlength="20000" placeholder="写下批注，公式如 $E=mc^2$" aria-label="批注内容" spellcheck="true"></textarea><div class="comment-preview-label">预览</div><div class="comment-preview"></div><div class="comment-error" role="status" hidden></div><div class="comment-actions"><button data-save-comment="true">保存批注</button><button data-delete-comment="true" hidden>删除批注</button><button data-cancel-comment="true">取消</button></div></section></div>
+    <div class="comment-view" hidden role="tooltip"><div class="comment-view-content"></div></div>
     <div class="toast" hidden role="status" aria-live="polite"></div>`;
   document.documentElement.append(host);
   const $ = selector => shadow.querySelector(selector);
   let notes = [], selected = null, currentURL = C.pageKey(location.href), busy = false, timer, toastTimer;
   let enabled = false, activationState = null, loadRevision = 0;
-  let editingId = null, fontColor = null;
+  let editingId = null, fontColor = null, currentTextColor = 'red';
   let expandedKind = null;
+  let commentHoverId = null, commentHoverTarget = null, commentHoverTimer, commentViewHideTimer;
   let recent = { highlight: [], text: [] };
+  let preferences = C.normalizePreferences();
   const histories = new Map();
   const historyFor = url => {
     if (!histories.has(url)) histories.set(url, C.createHistory(chrome.storage.local));
@@ -37,6 +43,11 @@
     shadow.querySelectorAll('[data-color]').forEach(button => button.setAttribute('aria-pressed', String(C.colorValue('highlight', button.dataset.color) === C.colorValue('highlight', highlightColor))));
     shadow.querySelectorAll('[data-font-color]').forEach(button => button.setAttribute('aria-pressed', String(C.colorValue('text', button.dataset.fontColor) === C.colorValue('text', fontColor))));
     $('[data-highlight]').style.backgroundColor = C.colorValue('highlight', highlightColor);
+  }
+  function updateShortcutHints() {
+    $('[data-highlight]').title = '高亮 · ' + preferences.shortcuts.highlight;
+    $('[data-bold]').title = '加粗 · ' + preferences.shortcuts.bold;
+    $('.text-palette .palette-label').textContent = '文字颜色 · ' + preferences.shortcuts.fontColor;
   }
   for (const [color, { label, value }] of Object.entries(C.COLORS).slice(0, 7)) {
     const button = document.createElement('button'); button.className = 'swatch'; button.dataset.color = color;
@@ -66,7 +77,44 @@
   }
   function closeComment() {
     $('.comment-editor').hidden = true; $('.comment-error').hidden = true;
+    $('.toolbar').classList.remove('comment-open');
   }
+  function hideCommentView() {
+    clearTimeout(commentHoverTimer); clearTimeout(commentViewHideTimer);
+    commentHoverTimer = undefined; commentHoverId = null; commentHoverTarget = null;
+    $('.comment-view').hidden = true; $('.comment-view-content').replaceChildren();
+  }
+  function scheduleHideCommentView() {
+    clearTimeout(commentHoverTimer); commentHoverTimer = undefined;
+    clearTimeout(commentViewHideTimer);
+    commentViewHideTimer = setTimeout(hideCommentView, 160);
+  }
+  function showCommentView(note, target) {
+    const panel = $('.comment-view');
+    globalThis.PageTintComments.render($('.comment-view-content'), note.note);
+    panel.hidden = false;
+    const rect = target.getBoundingClientRect(), width = panel.offsetWidth, height = panel.offsetHeight;
+    panel.style.left = Math.max(8, Math.min(innerWidth - width - 8, rect.left)) + 'px';
+    const below = rect.bottom + 8;
+    panel.style.top = (below + height <= innerHeight - 8 ? below : Math.max(8, rect.top - height - 8)) + 'px';
+  }
+  function queueCommentView(target) {
+    const note = notes.find(item => item.id === target.dataset.pagetintId && item.note.trim());
+    if (!note || preferences.commentHoverDelay === 0) { hideCommentView(); return; }
+    clearTimeout(commentViewHideTimer);
+    if (commentHoverId === note.id && (commentHoverTimer || !$('.comment-view').hidden)) return;
+    hideCommentView();
+    commentHoverId = note.id; commentHoverTarget = target;
+    commentHoverTimer = setTimeout(() => {
+      commentHoverTimer = undefined;
+      const current = notes.find(item => item.id === commentHoverId && item.note.trim());
+      const target = commentHoverTarget?.isConnected ? commentHoverTarget : document.querySelector(`[data-pagetint-comment][data-pagetint-id="${commentHoverId}"]`);
+      commentHoverTarget = target;
+      if (enabled && current && target) showCommentView(current, target);
+    }, preferences.commentHoverDelay);
+  }
+  $('.comment-view').onmouseenter = () => clearTimeout(commentViewHideTimer);
+  $('.comment-view').onmouseleave = hideCommentView;
   function previewComment() {
     const errors = globalThis.PageTintComments.render($('.comment-preview'), $('#comment-input').value);
     $('.comment-error').textContent = errors.length ? '公式无法渲染：' + errors[0].message : '';
@@ -75,12 +123,13 @@
   }
   function openComment() {
     if (!selected) return;
-    closeColors();
+    hideCommentView(); closeColors();
     const mark = commentMark();
     $('#comment-input').value = mark?.note || '';
     $('.comment-quote').textContent = selected.exact;
     $('[data-delete-comment]').hidden = !mark?.note;
     $('.comment-editor').hidden = false;
+    $('.toolbar').classList.add('comment-open');
     previewComment(); fitToolbar(); $('#comment-input').focus();
   }
   async function saveComment() {
@@ -100,7 +149,7 @@
       await historyFor(currentURL).change(key, commentOnly ? undefined : C.updateMark(existing, { note: '' }));
       closeComment();
       if (commentOnly) { editingId = null; selected = null; $('.toolbar').hidden = true; }
-      await load(); updateCommentButton(); toast('批注已删除 · Ctrl+Z 撤销');
+      await load(); updateCommentButton(); toast(`批注已删除 · ${preferences.shortcuts.undo} 撤销`);
     } finally { busy = false; }
   }
   $('#comment-input').oninput = previewComment;
@@ -133,7 +182,8 @@
   }
   async function applyColor(kind, color) {
     if (busy) return;
-    if (kind === 'highlight') highlightColor = color; else fontColor = color;
+    if (kind === 'highlight') highlightColor = color;
+    else { fontColor = color; currentTextColor = color; }
     updatePalette();
     if (await annotate(kind === 'highlight' ? { color } : { fontColor: color })) closeColors();
   }
@@ -249,7 +299,13 @@
     enabled = activationState.enabled;
     notes = Object.entries(records).filter(([key, n]) => key.startsWith(C.PREFIX) && C.validNote(n) && C.pageKey(n.url) === currentURL).map(([, n]) => n).sort((a, b) => a.updatedAt.localeCompare(b.updatedAt));
     updateCommentButton();
+    if (commentHoverId && !$('.comment-view').hidden) {
+      const current = notes.find(item => item.id === commentHoverId && item.note.trim());
+      const target = current && document.querySelector(`[data-pagetint-comment][data-pagetint-id="${commentHoverId}"]`);
+      if (current && target) { commentHoverTarget = target; showCommentView(current, target); } else hideCommentView();
+    }
     if (!enabled) {
+      hideCommentView();
       observer.disconnect(); clearTimeout(timer); clearTimeout(toastTimer);
       selected = null; editingId = null; closeColors(); closeComment(); $('.toolbar').hidden = true; $('.toast').hidden = true;
       host.style.setProperty('display', 'none', 'important'); unwrap();
@@ -282,12 +338,12 @@
         highlightColor = patch.color;
         recent.highlight = C.recentColors(recent.highlight, C.colorValue('highlight', patch.color).slice(0, 7));
       }
-      if (patch.fontColor) recent.text = C.recentColors(recent.text, C.colorValue('text', patch.fontColor));
+      if (patch.fontColor) { currentTextColor = patch.fontColor; recent.text = C.recentColors(recent.text, C.colorValue('text', patch.fontColor)); }
       if (patch.color || patch.fontColor) {
-        await chrome.storage.local.set({ recentHighlightColors: recent.highlight, recentTextColors: recent.text, highlightColor });
+        await chrome.storage.local.set({ recentHighlightColors: recent.highlight, recentTextColors: recent.text, highlightColor, textColor: currentTextColor });
         updatePalette();
       }
-      toast(Object.hasOwn(patch, 'note') ? '批注已保存 · Ctrl+Z 撤销' : '标记已保存 · Ctrl+Z 撤销');
+      toast(`${Object.hasOwn(patch, 'note') ? '批注已保存' : '标记已保存'} · ${preferences.shortcuts.undo} 撤销`);
       return true;
     } finally { busy = false; }
   }
@@ -308,7 +364,7 @@
       await historyFor(currentURL).changeMany(changes);
       editingId = null; fontColor = null; closeColors(); closeComment(); updatePalette(); updateCommentButton();
       await load();
-      toast('已复原所选文字 · Ctrl+Z 撤销');
+      toast(`已复原所选文字 · ${preferences.shortcuts.undo} 撤销`);
     } finally { busy = false; }
   }
   function isEditing(event) {
@@ -337,7 +393,7 @@
   });
   document.addEventListener('keydown', event => {
     if (!enabled) return;
-    const action = C.shortcut(event);
+    const action = C.shortcut(event, preferences.shortcuts);
     if (!action || isEditing(event)) return;
     if (action === 'undo') {
       if (C.pageKey(location.href) !== currentURL || !historyFor(currentURL).canUndo()) return;
@@ -346,10 +402,18 @@
     if (!capture(false)) return;
     editingId = null;
     event.preventDefault(); event.stopPropagation();
-    run(() => annotate(action === 'bold' ? { bold: true } : { color: highlightColor }));
+    run(() => action === 'fontColor' ? applyColor('text', currentTextColor) : annotate(action === 'bold' ? { bold: true } : { color: highlightColor }));
   }, true);
-  document.addEventListener('mouseup', e => { if (!enabled || e.composedPath().includes(host)) return; closeColors(); closeComment(); $('.toolbar').hidden = true; selected = null; editingId = null; fontColor = null; updatePalette(); updateCommentButton(); if (!isEditing(e)) capture(); });
+  document.addEventListener('mouseover', event => {
+    if (!enabled || event.composedPath().includes(host)) return;
+    const target = event.target instanceof Element ? event.target.closest('[data-pagetint-comment]') : null;
+    if (target) queueCommentView(target); else scheduleHideCommentView();
+  });
+  document.documentElement.addEventListener('mouseleave', scheduleHideCommentView);
+  document.addEventListener('scroll', event => { if (!event.composedPath().includes(host)) hideCommentView(); }, true);
+  document.addEventListener('mouseup', e => { if (!enabled || e.composedPath().includes(host)) return; hideCommentView(); closeColors(); closeComment(); $('.toolbar').hidden = true; selected = null; editingId = null; fontColor = null; updatePalette(); updateCommentButton(); if (!isEditing(e)) capture(); });
   document.addEventListener('click', event => {
+    hideCommentView();
     if (!enabled || event.composedPath().includes(host) || isEditing(event) || !getSelection()?.isCollapsed || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
     const candidates = [];
     for (let el = event.target; el instanceof Element; el = el.parentElement) {
@@ -364,9 +428,14 @@
     fontColor = target.mark.fontColor || null;
     updatePalette(); updateCommentButton(); showAt(target.el.getBoundingClientRect());
   });
-  document.addEventListener('keyup', e => { if (e.key === 'Escape') { if (expandedKind) closeColors(); else if (!$('.comment-editor').hidden) closeComment(); else $('.toolbar').hidden = true; } else if (e.key === 'Shift') capture(); });
+  document.addEventListener('keyup', e => { if (e.key === 'Escape') { if (expandedKind) closeColors(); else if (!$('.comment-editor').hidden) closeComment(); else if (!$('.comment-view').hidden) hideCommentView(); else $('.toolbar').hidden = true; } else if (e.key === 'Shift') capture(); });
   chrome.storage.onChanged.addListener((changes, area) => {
     if (area !== 'local') return;
+    if (changes[C.PREFERENCES]) {
+      preferences = C.normalizePreferences(changes[C.PREFERENCES].newValue);
+      updateShortcutHints(); hideCommentView();
+      if (Object.keys(changes).length === 1) return;
+    }
     if (changes[A.ENABLED] || changes[A.RULES]) { run(load); return; }
     if (enabled) schedule();
   });
@@ -386,9 +455,12 @@
     return true;
   });
   // Canonical page identity is shared with data management and legacy record loading.
-  setInterval(() => { if (C.pageKey(location.href) !== currentURL) { currentURL = C.pageKey(location.href); selected = null; editingId = null; closeColors(); closeComment(); updateCommentButton(); $('.toolbar').hidden = true; run(load); } }, 700);
+  setInterval(() => { if (C.pageKey(location.href) !== currentURL) { currentURL = C.pageKey(location.href); selected = null; editingId = null; hideCommentView(); closeColors(); closeComment(); updateCommentButton(); $('.toolbar').hidden = true; run(load); } }, 700);
   run(async () => {
-    const settings = await chrome.storage.local.get(['highlightColor', 'recentHighlightColors', 'recentTextColors']);
+    const settings = await chrome.storage.local.get(['highlightColor', 'textColor', 'recentHighlightColors', 'recentTextColors', C.PREFERENCES]);
+    preferences = C.normalizePreferences(settings[C.PREFERENCES]);
+    if (C.colorValue('text', settings.textColor)) currentTextColor = settings.textColor;
+    updateShortcutHints();
     if (C.colorValue('highlight', settings.highlightColor)) highlightColor = settings.highlightColor;
     recent.highlight = C.recentColors(settings.recentHighlightColors, null);
     recent.text = C.recentColors(settings.recentTextColors, null);

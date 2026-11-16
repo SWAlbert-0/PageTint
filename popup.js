@@ -77,6 +77,8 @@ $('#export-markdown').onclick = () => run(async () => {
 });
 async function load() {
   const records = await chrome.storage.local.get(null);
+  const preferences = C.normalizePreferences(records[C.PREFERENCES]);
+  document.querySelectorAll('[data-shortcut-label]').forEach(label => { label.textContent = preferences.shortcuts[label.dataset.shortcutLabel]; });
   const pages = C.groupPages(records);
   $('#summary').textContent = `已保存 ${pages.length} 个页面 · ${pages.reduce((sum, page) => sum + page.comments, 0)} 条批注`;
   $('#delete-help').hidden = !pages.length;

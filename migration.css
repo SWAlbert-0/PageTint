@@ -4,6 +4,35 @@ h1, h2, p { margin: 0; }
 .page-heading { padding: 37px 0 26px; }
 h1 { font-size: clamp(24px, 3vw, 30px); line-height: 1.4; font-weight: 650; letter-spacing: -.6px; }
 .page-heading > p { color: var(--muted); margin-top: 8px; }
+.preferences-panel { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 22px 24px; box-shadow: 0 3px 12px #203a4006; }
+.preferences-heading { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-bottom: 18px; }
+.preferences-heading h2, .section-intro h2 { font-size: 18px; font-weight: 650; letter-spacing: -.2px; }
+.preferences-heading p, .section-intro p { color: var(--muted); font-size: 12px; margin-top: 5px; }
+.preferences-icon { width: 42px; height: 42px; border-radius: 10px; display: grid; place-items: center; background: var(--wash); color: var(--teal); flex-shrink: 0; }
+.preferences-icon svg { width: 23px; height: 23px; }
+.preference-row { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 18px 0; border-top: 1px solid #e7eeee; }
+.preference-row label { font-size: 13px; font-weight: 650; }
+.preference-row p { color: var(--muted); font-size: 11px; margin-top: 5px; }
+#comment-hover-delay { min-width: 150px; padding: 8px 10px; border: 1px solid #bdd1d3; border-radius: 8px; background: #f8fafa; color: var(--ink); font: 12px "Segoe UI", "Microsoft YaHei UI", sans-serif; cursor: pointer; }
+#comment-hover-delay:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+.shortcut-settings { padding-top: 18px; border-top: 1px solid #e7eeee; }
+.shortcut-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; }
+.shortcut-heading h3 { font-size: 13px; font-weight: 650; }
+.shortcut-heading p { color: var(--muted); font-size: 11px; }
+.shortcut-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-top: 14px; }
+.shortcut-item { padding: 12px; background: #f6f9f9; border: 1px solid #e3ebeb; border-radius: 9px; }
+.shortcut-item > span { display: block; color: var(--muted); font-size: 11px; margin-bottom: 8px; }
+.shortcut-key { width: 100%; min-height: 36px; padding: 7px 9px; border: 1px solid #c5d6d8; border-bottom: 3px solid var(--yellow); border-radius: 7px; background: #fff; color: var(--ink); font: 600 12px "Cascadia Code", Consolas, monospace; cursor: pointer; }
+.shortcut-key:hover { border-color: #8fb9bd; background: var(--wash); }
+.shortcut-key.is-capturing { border-color: var(--teal); background: var(--wash); color: var(--teal-dark); }
+.shortcut-key:focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+.shortcut-help { color: var(--muted); font-size: 10.5px; margin-top: 11px; }
+.settings-actions { display: flex; gap: 10px; margin-top: 18px; }
+.settings-actions .button { min-height: 40px; font-size: 12px; }
+.settings-status { font-size: 11px; margin-top: 10px; color: var(--muted); }
+.settings-status[data-kind="success"] { color: #276547; }
+.settings-status[data-kind="error"] { color: #973c2a; }
+.section-intro { padding: 30px 0 18px; }
 .storage-panel { background: var(--paper); border: 1px solid var(--line); border-radius: 12px; padding: 20px 24px; margin-bottom: 20px; }
 .storage-overview { display: flex; align-items: center; justify-content: space-between; gap: 20px; }
 .storage-overview h2 { font-size: 12px; color: var(--muted); font-weight: 500; margin-bottom: 4px; }
@@ -43,6 +72,14 @@ footer svg { width: 15px; height: 15px; margin-top: 2px; }
   .site-header { padding: 19px 0; }
   .page-heading { padding: 28px 0 21px; }
   .page-heading > p { font-size: 13px; }
+  .preferences-panel { padding: 18px; }
+  .preference-row { align-items: flex-start; flex-direction: column; gap: 12px; }
+  #comment-hover-delay { width: 100%; }
+  .shortcut-heading { flex-direction: column; gap: 5px; }
+  .shortcut-grid { grid-template-columns: 1fr; gap: 9px; }
+  .shortcut-item { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+  .shortcut-item > span { margin: 0; }
+  .shortcut-key { width: 150px; }
   .storage-panel { padding: 18px; }
   .action-grid { grid-template-columns: 1fr; gap: 14px; }
   .action-card { padding: 22px; }

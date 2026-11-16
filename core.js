@@ -1,6 +1,9 @@
 (function (root) {
   'use strict';
   const PREFIX = 'course-note:';
+  const PREFERENCES = 'pagetintPreferences';
+  const DEFAULT_HOVER_DELAY = 2000;
+  const DEFAULT_SHORTCUTS = Object.freeze({ bold: 'Ctrl+B', highlight: 'Ctrl+Q', fontColor: 'Alt+C', undo: 'Ctrl+Z' });
   const COLORS = Object.freeze({
     yellow: { label: '黄色', value: '#ffdf6e99' },
     green: { label: '绿色', value: '#8cdda699' },
@@ -36,9 +39,40 @@
     const entries = [color, ...(Array.isArray(previous) ? previous : [])].map(normalizeHex).filter(Boolean);
     return [...new Set(entries)].slice(0, limit);
   }
-  function shortcut(event) {
-    if (!event.ctrlKey || event.metaKey || event.altKey || event.shiftKey || event.isComposing || event.repeat) return null;
-    return ({ b: 'bold', q: 'highlight', z: 'undo' })[event.key.toLowerCase()] || null;
+  function parseShortcut(value) {
+    if (typeof value !== 'string') return null;
+    const parts = value.split('+'), key = parts.pop()?.toLowerCase();
+    const modifiers = new Set(parts);
+    if (modifiers.size !== parts.length || ![...modifiers].every(part => ['Ctrl', 'Alt', 'Shift'].includes(part))) return null;
+    if (!/^(?:[a-z0-9]|f(?:[1-9]|1[0-2]))$/.test(key || '')) return null;
+    const parsed = { ctrl: modifiers.has('Ctrl'), alt: modifiers.has('Alt'), shift: modifiers.has('Shift'), key };
+    return parsed.ctrl || parsed.alt ? parsed : null;
+  }
+  function formatShortcut(value) {
+    const parsed = parseShortcut(value);
+    if (!parsed) return '';
+    return [parsed.ctrl && 'Ctrl', parsed.alt && 'Alt', parsed.shift && 'Shift'].filter(Boolean).concat(parsed.key.toUpperCase()).join('+');
+  }
+  function shortcutFromEvent(event) {
+    if (!event || event.metaKey || event.isComposing || ['Control', 'Alt', 'Shift', 'Meta'].includes(event.key)) return null;
+    return formatShortcut([event.ctrlKey && 'Ctrl', event.altKey && 'Alt', event.shiftKey && 'Shift'].filter(Boolean).concat(event.key).join('+')) || null;
+  }
+  function normalizePreferences(value) {
+    const shortcuts = { ...DEFAULT_SHORTCUTS };
+    for (const action of Object.keys(DEFAULT_SHORTCUTS)) {
+      const formatted = formatShortcut(value?.shortcuts?.[action]);
+      if (formatted) shortcuts[action] = formatted;
+    }
+    const delay = Number(value?.commentHoverDelay);
+    return { commentHoverDelay: Number.isFinite(delay) && delay >= 0 && delay <= 10000 ? Math.round(delay / 100) * 100 : DEFAULT_HOVER_DELAY, shortcuts };
+  }
+  function shortcut(event, configured = DEFAULT_SHORTCUTS) {
+    if (!event || event.metaKey || event.isComposing || event.repeat) return null;
+    for (const [action, fallback] of Object.entries(DEFAULT_SHORTCUTS)) {
+      const parsed = parseShortcut(configured?.[action] || fallback);
+      if (parsed && Boolean(event.ctrlKey) === parsed.ctrl && Boolean(event.altKey) === parsed.alt && Boolean(event.shiftKey) === parsed.shift && event.key.toLowerCase() === parsed.key) return action;
+    }
+    return null;
   }
   // Each extension view keeps its own undo stack. Writes and undos are serialized.
   function createHistory(storage, limit = 100) {
@@ -208,7 +242,7 @@
     }
     return [...pages.values()].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt) || a.url.localeCompare(b.url));
   }
-  const api = { PREFIX, COLORS, TEXT_COLORS, EXTRA_HIGHLIGHTS, EXTRA_TEXT_COLORS, normalizeHex, colorValue, recentColors, shortcut, createHistory, createId, pageKey, legacyPageKey, locate, validNote, groupPages, updateMark, restoreChanges };
+  const api = { PREFIX, PREFERENCES, DEFAULT_HOVER_DELAY, DEFAULT_SHORTCUTS, COLORS, TEXT_COLORS, EXTRA_HIGHLIGHTS, EXTRA_TEXT_COLORS, normalizeHex, colorValue, recentColors, parseShortcut, formatShortcut, shortcutFromEvent, normalizePreferences, shortcut, createHistory, createId, pageKey, legacyPageKey, locate, validNote, groupPages, updateMark, restoreChanges };
   root.PageTint = api;
   if (typeof module !== 'undefined') module.exports = api;
 })(globalThis);
